@@ -13,5 +13,4 @@ public class CobrandDAO extends BasicDAO<Cobrand, ObjectId>
   {
     super(mongo, morphia, dbName);
   }
-
 }

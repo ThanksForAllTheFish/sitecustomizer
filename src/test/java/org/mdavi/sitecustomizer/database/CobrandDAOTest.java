@@ -1,7 +1,7 @@
 package org.mdavi.sitecustomizer.database;
 
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mdavi.sitecustomizer.matchers.SiteCustomizerMatchers.equalCobrandWithProperties;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class CobrandDAOTest
   {
     configuredAndStartFakeMongoDb();
     
-    populateWithFakeData();
+    populateWithFakeData(getMongoDb(), new BasicDBObject("cobrand", "NAME"), new BasicDBObject("$push", new BasicDBObject("properties", buildSingleProperty("aKey", "aValue"))));
   }
   
   @Before
@@ -65,21 +65,21 @@ public class CobrandDAOTest
   }
 
   @Test
-  public void canRetrieveExistingCobrand () throws Exception
+  public void canRetrieveExistingCobrand ()
   {
     whenILookForAnExistingCobrand("NAME");
 
-    thenTheCobrandAndItsPropertiesAreLoaded();
+    thenTheCobrandAndItsPropertiesAreLoaded("NAME", buildSingleProperty("aKey", "aValue"));
   }
   
   @Test
-  public void canRetrieveNull () throws Exception
+  public void canRetrieveNull ()
   {
     whenILookForANonExistentCobrand("NONE");
 
     thenNullIsLoaded();
   }
-
+  
   private void whenILookForANonExistentCobrand (final String cobrandName)
   {
     whenILookForAnExistingCobrand(cobrandName);
@@ -95,11 +95,9 @@ public class CobrandDAOTest
     assertThat(cobrand, nullValue());
   }
 
-  private void thenTheCobrandAndItsPropertiesAreLoaded ()
+  private void thenTheCobrandAndItsPropertiesAreLoaded (String cobrandName, Map<String, String> properties)
   {
-    final Map<String, String> properties = new HashMap<>();
-    properties.put("aKey", "aValue");
-    assertThat(cobrand, equalCobrandWithProperties("NAME", properties));
+    assertThat(cobrand, equalCobrandWithProperties(cobrandName, properties));
   }
 
   private void setupCobrandDao ()
@@ -115,21 +113,29 @@ public class CobrandDAOTest
     morphia.map(Cobrand.class);
   }
   
-  private static void populateWithFakeData () throws UnknownHostException
+  private static void populateWithFakeData (DB db, BasicDBObject rootObject, BasicDBObject properties) throws UnknownHostException
+  {
+    final DBCollection col = db.getCollection("cobrands");
+    col.update(rootObject, properties, true, false);
+  }
+
+  private static Map<String, String> buildSingleProperty (String name, String value)
+  {
+    final Map<String, String> keys = new HashMap<>();
+    keys.put(name, value);
+    return keys;
+  }
+
+  private static DB getMongoDb () throws UnknownHostException
   {
     final MongoClient mongo = new MongoClient(HOST, PORT);
     final DB db = mongo.getDB(SITECUSTOMIZER_DB);
-    final DBCollection col = db.createCollection("cobrands", new BasicDBObject());
-    final Map<String, String> keys = new HashMap<>();
-    keys.put("aKey", "aValue");
-    final BasicDBObject query = new BasicDBObject("cobrand", "NAME");
-    final BasicDBObject update = new BasicDBObject("$push", new BasicDBObject("properties", keys));
-    col.update(query, update, true, false);
+    return db;
   }
 
   private static void configuredAndStartFakeMongoDb () throws UnknownHostException, IOException
   {
-    final IMongodConfig config = new MongodConfigBuilder().version(Version.Main.PRODUCTION)
+    final IMongodConfig config = new MongodConfigBuilder().version(Version.Main.V2_4)
         .net(new Net(PORT, Network.localhostIsIPv6())).build();
     final MongodStarter runtime = MongodStarter.getDefaultInstance();
     mongodExecutable = runtime.prepare(config);
