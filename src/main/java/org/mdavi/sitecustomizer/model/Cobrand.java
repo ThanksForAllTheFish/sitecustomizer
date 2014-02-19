@@ -16,13 +16,8 @@ public class Cobrand
   
   private String cobrand;
   
-  @Embedded("keys")
-  private Collection<Map<String, String>> keys;
-  
-  public Collection<Map<String, String>> getKeys ()
-  {
-    return keys;
-  }
+  @Embedded("properties")
+  private Collection<Map<String, String>> properties;
   
   @Override
   public String toString ()
@@ -31,11 +26,11 @@ public class Cobrand
     return cobrand;
   }
 
-  public String getValueFor (String key)
+  public String getValueFor (String property)
   {
-    Iterator<Map<String, String>> keyIt = keys.iterator();
-    if(keyIt.hasNext())
-      return keyIt.next().get(key);
+    Iterator<Map<String, String>> propertyIt = properties.iterator();
+    if(propertyIt.hasNext())
+      return propertyIt.next().get(property);
     return null;
   }
 

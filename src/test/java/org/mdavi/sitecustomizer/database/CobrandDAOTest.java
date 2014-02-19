@@ -123,7 +123,7 @@ public class CobrandDAOTest
     final Map<String, String> keys = new HashMap<>();
     keys.put("aKey", "aValue");
     final BasicDBObject query = new BasicDBObject("cobrand", "NAME");
-    final BasicDBObject update = new BasicDBObject("$push", new BasicDBObject("keys", keys));
+    final BasicDBObject update = new BasicDBObject("$push", new BasicDBObject("properties", keys));
     col.update(query, update, true, false);
   }
 

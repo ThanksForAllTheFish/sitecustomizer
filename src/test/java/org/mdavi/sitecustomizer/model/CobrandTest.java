@@ -62,11 +62,11 @@ public class CobrandTest
   private Cobrand prepareFakeCobrand () throws NoSuchFieldException, IllegalAccessException
   {
     final Cobrand cobrand = new Cobrand();    
-    inject(cobrand, "keys", buildFakeKeys());
+    inject(cobrand, "properties", buildFakeProperties());
     return cobrand;
   }
 
-  private static ArrayList<Map<String, String>> buildFakeKeys ()
+  private static ArrayList<Map<String, String>> buildFakeProperties ()
   {
     final ArrayList<Map<String, String>> keys = new ArrayList<>();
     final Map<String, String> values = new HashMap<>();
@@ -79,9 +79,9 @@ public class CobrandTest
 
   private static void inject (final Object source, final String fieldName, final Object value) throws NoSuchFieldException, IllegalAccessException
   {
-    final Field keysField = source.getClass().getDeclaredField(fieldName);
-    keysField.setAccessible(true);
-    keysField.set(source, value);
+    final Field field = source.getClass().getDeclaredField(fieldName);
+    field.setAccessible(true);
+    field.set(source, value);
   }
 
 }
