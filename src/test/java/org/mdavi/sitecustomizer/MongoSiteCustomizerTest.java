@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.jmock.Expectations;
+import org.junit.After;
 import org.junit.Test;
 import org.mdavi.sitecustomizer.MongoSiteCustomizer;
 import org.mdavi.sitecustomizer.services.Retriever;
@@ -22,6 +23,11 @@ public class MongoSiteCustomizerTest extends MockableTest
   private static final String COBRAND_NAME = "cobrand";
   private Retriever retriever = context.mock(Retriever.class);
   private MongoSiteCustomizer siteCustomizer = new MongoSiteCustomizer(retriever);
+  
+  @After
+  public void teardown() {
+    context.assertIsSatisfied();
+  }
 
   @Test
   public void canRetrieveAStringSingleValue ()
@@ -31,19 +37,6 @@ public class MongoSiteCustomizerTest extends MockableTest
     String value = whenRetrievingExistentPropertyForCobrand(COBRAND_NAME, PROPERTY_NAME);
 
     thenThePropertyValueIsReturned(value, equalTo(VALUE_1));
-  }
-
-  private void givenACobrandAndAProperty (final String cobrand, final String property, final String... propertyValues)
-  {
-    final List<String> values = new ArrayList<>();
-    for(String value : propertyValues)
-      values.add(value);
-    context.checking(new Expectations()
-    {
-      {
-        oneOf(retriever).getProperties(cobrand, property); will(returnValue(values)); 
-      }
-    });
   }
 
   @Test
@@ -86,6 +79,19 @@ public class MongoSiteCustomizerTest extends MockableTest
     String value = whenRetrievingExistentPropertyForCobrand(COBRAND_NAME, PROPERTY_NAME);
   
     thenValueIsFirstInValues(values, value);
+  }
+
+  private void givenACobrandAndAProperty (final String cobrand, final String property, final String... propertyValues)
+  {
+    final List<String> values = new ArrayList<>();
+    for(String value : propertyValues)
+      values.add(value);
+    context.checking(new Expectations()
+    {
+      {
+        oneOf(retriever).getProperties(cobrand, property); will(returnValue(values));
+      }
+    });
   }
 
   private String whenRetrievingExistentPropertyForCobrand (String cobrand, String property)
