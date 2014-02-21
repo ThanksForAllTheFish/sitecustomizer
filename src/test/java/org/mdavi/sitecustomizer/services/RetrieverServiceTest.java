@@ -1,26 +1,24 @@
 package org.mdavi.sitecustomizer.services;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
+
+import java.util.Collection;
 
 import org.bson.types.ObjectId;
 import org.jmock.Expectations;
-import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
+import org.mdavi.sitecustomizer.MockableTest;
 import org.mdavi.sitecustomizer.model.Cobrand;
-import org.mdavi.sitecustomizer.model.FakeCobrandTest;
 import org.mongodb.morphia.dao.DAO;
 
-public class RetrieverServiceTest extends FakeCobrandTest
+public class RetrieverServiceTest extends MockableTest
 {
-  @Rule public JUnitRuleMockery context = new JUnitRuleMockery();
-  
   @SuppressWarnings("unchecked")
-  private DAO<Cobrand, ObjectId> dao = context.mock(DAO.class);
-  private final Retriever service = new Retriever(dao);
+  private final DAO<Cobrand, ObjectId> dao = context.mock(DAO.class);
+  private final Retriever service = new PropertyRetriever(dao);
   
   @After
   public void tearDown () {
@@ -32,18 +30,48 @@ public class RetrieverServiceTest extends FakeCobrandTest
   {
     givenACobrand(prepareFakeCobrand("cobrandName"), "cobrandName");
     
-    String value = whenLookingForAValue("cobrandName", "property");
+    final String value = whenLookingForAValue("cobrandName", "property");
     
-    assertThat(value, equalTo("value"));
+    thenTheRelativeValuesAreRetrieved(value, equalTo("value"));
+  }
+  
+  @Test
+  public void canRetrieveASinglePropertyValue_fromPosition () throws NoSuchFieldException, IllegalAccessException
+  {
+    givenACobrand(prepareFakeCobrand("cobrandName"), "cobrandName");
+    
+    final String value = whenLookingForAValueInPosition("cobrandName", "property", 0);
+    
+    thenTheRelativeValuesAreRetrieved(value, equalTo("value"));
+  }
+  
+  @Test
+  public void canRetrieveAMultiPropertyValue () throws NoSuchFieldException, IllegalAccessException
+  {
+    givenACobrand(prepareFakeCobrand("cobrandName"), "cobrandName");
+    
+    final Collection<String> value = whenLookingForAValues("cobrandName", "property");
+    
+    thenTheRelativeValuesAreRetrieved(value, contains("value"));
+  }
+
+  private Collection<String> whenLookingForAValues (String cobrandName, String property)
+  {
+    return service.getProperties(cobrandName, property);
+  }
+
+  private String whenLookingForAValueInPosition (String cobrandName, String property, int position)
+  {
+    return service.getProperty(cobrandName, property, position);
   }
 
   @Test
   public void canRetrieveNull_forNonExistentCobrand () {
     givenACobrand(null, "nonExistent");
     
-    String value = whenLookingForAValue("nonExistent", "property");
+    final String value = whenLookingForAValue("nonExistent", "property");
     
-    assertThat(value, nullValue());
+    thenTheRelativeValuesAreRetrieved(value, nullValue());
   }
   
   @Test
@@ -51,9 +79,9 @@ public class RetrieverServiceTest extends FakeCobrandTest
   {
     givenACobrand(prepareFakeCobrand("cobrandName"), "cobrandName");
     
-    String value = whenLookingForAValue("cobrandName", "nonExistent");
+    final String value = whenLookingForAValue("cobrandName", "nonExistent");
     
-    assertThat(value, nullValue());
+    thenTheRelativeValuesAreRetrieved(value, nullValue());
   }
 
   private void givenACobrand (final Cobrand cobrand, final String cobrandName)
@@ -66,8 +94,8 @@ public class RetrieverServiceTest extends FakeCobrandTest
     });
   }
 
-  private String whenLookingForAValue (String cobrand, String property)
+  private String whenLookingForAValue (final String cobrand, final String property)
   {
-    return service.getValue(cobrand, property);
+    return service.getProperty(cobrand, property);
   }
 }

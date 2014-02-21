@@ -9,7 +9,7 @@ import com.mongodb.Mongo;
 
 public class CobrandDAO extends BasicDAO<Cobrand, ObjectId>
 {
-  public CobrandDAO (Morphia morphia, Mongo mongo, String dbName)
+  public CobrandDAO (final Morphia morphia, final Mongo mongo, final String dbName)
   {
     super(mongo, morphia, dbName);
   }

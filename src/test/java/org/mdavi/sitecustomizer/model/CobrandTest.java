@@ -2,11 +2,9 @@ package org.mdavi.sitecustomizer.model;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
 
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 public class CobrandTest extends FakeCobrandTest
@@ -23,7 +21,7 @@ public class CobrandTest extends FakeCobrandTest
 
     whenILookForAKey("property");
 
-    thenTheRelativeValuesAreRetrieved(contains("value"));
+    thenTheRelativeValuesAreRetrieved(this.value, contains("value"));
   }
 
   @Test
@@ -34,26 +32,20 @@ public class CobrandTest extends FakeCobrandTest
 
     whenILookForANonExistentKey("notExistent");
 
-    thenTheRelativeValuesAreRetrieved(nullValue(String.class));
+    thenTheRelativeValuesAreRetrieved(this.value, nullValue(String.class));
   }
 
-  private void whenILookForANonExistentKey (String key)
+  private void whenILookForANonExistentKey (final String key)
   {
     whenILookForAKey(key);
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private void thenTheRelativeValuesAreRetrieved (Matcher expectedValue)
-  {
-    assertThat(this.value, expectedValue);
-  }
-
-  private void whenILookForAKey (String key)
+  private void whenILookForAKey (final String key)
   {
     value = cobrand.getValuesFor(key);
   }
 
-  private void givenACobrand (Cobrand fakeCobrand) throws NoSuchFieldException, IllegalAccessException
+  private void givenACobrand (final Cobrand fakeCobrand) throws NoSuchFieldException, IllegalAccessException
   {
     cobrand = fakeCobrand;
   }

@@ -17,13 +17,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mdavi.sitecustomizer.database.dao.CobrandDAO;
 import org.mdavi.sitecustomizer.model.Cobrand;
+import org.mdavi.sitecustomizer.model.FakeCobrandTest;
 import org.mongodb.morphia.Morphia;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 
@@ -35,7 +34,7 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 
-public class CobrandDAOTest
+public class CobrandDAOTest extends FakeCobrandTest
 {
   private static final String     HOST              = "localhost";
   private static final int        PORT              = 12345;
@@ -51,11 +50,13 @@ public class CobrandDAOTest
   {
     configuredAndStartFakeMongoDb();
     
-    populateWithFakeData(getMongoDb(), new BasicDBObject("cobrand", "NAME"), new BasicDBObject("$push", new BasicDBObject("properties", buildSingleProperty("aKey", "aValue"))));
+    BasicDBObject rootObject = new BasicDBObject("cobrand", "NAME");
+    rootObject.append("properties", buildSingleProperty("aKey", "aValue"));
+    populateWithFakeData(getMongoDb(), rootObject);
   }
   
   @Before
-  public void init () throws UnknownHostException
+  public void init () throws UnknownHostException, NoSuchFieldException, IllegalAccessException
   {
     configureMorphia();
 
@@ -117,18 +118,10 @@ public class CobrandDAOTest
     morphia.map(Cobrand.class);
   }
   
-  private static void populateWithFakeData (DB db, BasicDBObject rootObject, BasicDBObject properties) throws UnknownHostException
+  private static void populateWithFakeData (DB db, BasicDBObject cobrand) throws UnknownHostException
   {
     final DBCollection col = db.getCollection("cobrands");
-    col.update(rootObject, properties, true, false);
-    
-    DBCursor cursor = col.find();
-    
-    while(cursor.hasNext()) {
-      DBObject object = cursor.next();
-      
-      System.out.println(object);
-    }
+    col.save(cobrand);
   }
 
   private static Map<String, Collection<String>> buildSingleProperty (String name, String value)

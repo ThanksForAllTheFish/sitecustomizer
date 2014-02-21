@@ -1,10 +1,17 @@
 package org.mdavi.sitecustomizer;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.mdavi.sitecustomizer.services.Retriever;
 
 public class MongoSiteCustomizer
 {
+  private Retriever retriever;
+
+  public MongoSiteCustomizer (Retriever retriever)
+  {
+    this.retriever = retriever;
+  }
 
   public String getValue (String cobrand, String key)
   {
@@ -13,10 +20,7 @@ public class MongoSiteCustomizer
   
   public List<String> getValues (String cobrand, String key)
   {
-    List<String> values = new ArrayList<>();
-    values.add("value1");
-    values.add("value2");
-    return values;
+    return retriever.getProperties(cobrand, key);
   }
 
   public String getValue (String cobrand, String key, int position)
