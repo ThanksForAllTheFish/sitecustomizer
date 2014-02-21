@@ -1,42 +1,40 @@
 package org.mdavi.sitecustomizer.model;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.mdavi.sitecustomizer.model.Cobrand;
 
-public class CobrandTest
+public class CobrandTest extends FakeCobrandTest
 {
 
-  private Cobrand cobrand;
-  private String value;
+  private Cobrand            cobrand;
+  private Collection<String> value;
 
   @Test
-  public void canRetrieveAValue () throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException
+  public void canRetrieveValues () throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+                                  IllegalAccessException
   {
-    givenACobrand();
-    
-    whenILookForAKey("aKey");
-    
-    thenTheRelativeValueIsRetrieved(equalTo("aValue"));
+    givenACobrand(prepareFakeCobrand("cobrandName"));
+
+    whenILookForAKey("property");
+
+    thenTheRelativeValuesAreRetrieved(contains("value"));
   }
-  
+
   @Test
-  public void canRetrieveNull () throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException
+  public void canRetrieveNull () throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+                                IllegalAccessException
   {
-    givenACobrand();
-    
+    givenACobrand(new Cobrand());
+
     whenILookForANonExistentKey("notExistent");
-    
-    thenTheRelativeValueIsRetrieved(nullValue(String.class));
+
+    thenTheRelativeValuesAreRetrieved(nullValue(String.class));
   }
 
   private void whenILookForANonExistentKey (String key)
@@ -44,44 +42,20 @@ public class CobrandTest
     whenILookForAKey(key);
   }
 
-  private void thenTheRelativeValueIsRetrieved (Matcher<String> expectedValue)
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private void thenTheRelativeValuesAreRetrieved (Matcher expectedValue)
   {
     assertThat(this.value, expectedValue);
   }
 
   private void whenILookForAKey (String key)
   {
-    value = cobrand.getValueFor(key);
+    value = cobrand.getValuesFor(key);
   }
 
-  private void givenACobrand () throws NoSuchFieldException, IllegalAccessException
+  private void givenACobrand (Cobrand fakeCobrand) throws NoSuchFieldException, IllegalAccessException
   {
-    cobrand = prepareFakeCobrand();
-  }
-
-  private Cobrand prepareFakeCobrand () throws NoSuchFieldException, IllegalAccessException
-  {
-    final Cobrand cobrand = new Cobrand();    
-    inject(cobrand, "properties", buildFakeProperties());
-    return cobrand;
-  }
-
-  private static ArrayList<Map<String, String>> buildFakeProperties ()
-  {
-    final ArrayList<Map<String, String>> keys = new ArrayList<>();
-    final Map<String, String> values = new HashMap<>();
-    
-    values.put("aKey", "aValue");
-        
-    keys.add(values);
-    return keys;
-  }
-
-  private static void inject (final Object source, final String fieldName, final Object value) throws NoSuchFieldException, IllegalAccessException
-  {
-    final Field field = source.getClass().getDeclaredField(fieldName);
-    field.setAccessible(true);
-    field.set(source, value);
+    cobrand = fakeCobrand;
   }
 
 }

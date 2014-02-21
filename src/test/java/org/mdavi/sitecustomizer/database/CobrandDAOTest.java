@@ -1,11 +1,13 @@
 package org.mdavi.sitecustomizer.database;
 
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mdavi.sitecustomizer.matchers.SiteCustomizerMatchers.equalCobrandWithProperties;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +22,8 @@ import org.mongodb.morphia.Morphia;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 
@@ -95,7 +99,7 @@ public class CobrandDAOTest
     assertThat(cobrand, nullValue());
   }
 
-  private void thenTheCobrandAndItsPropertiesAreLoaded (String cobrandName, Map<String, String> properties)
+  private void thenTheCobrandAndItsPropertiesAreLoaded (String cobrandName, Map<String, Collection<String>> properties)
   {
     assertThat(cobrand, equalCobrandWithProperties(cobrandName, properties));
   }
@@ -117,12 +121,22 @@ public class CobrandDAOTest
   {
     final DBCollection col = db.getCollection("cobrands");
     col.update(rootObject, properties, true, false);
+    
+    DBCursor cursor = col.find();
+    
+    while(cursor.hasNext()) {
+      DBObject object = cursor.next();
+      
+      System.out.println(object);
+    }
   }
 
-  private static Map<String, String> buildSingleProperty (String name, String value)
+  private static Map<String, Collection<String>> buildSingleProperty (String name, String value)
   {
-    final Map<String, String> keys = new HashMap<>();
-    keys.put(name, value);
+    final Map<String, Collection<String>> keys = new HashMap<>();
+    Collection<String> values = new ArrayList<>();
+    values.add(value);
+    keys.put(name, values);
     return keys;
   }
 

@@ -1,17 +1,18 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies {
-	def hamcrestVersion = "1.3"
-	compile 'org.mongodb:mongo-java-driver:2.12.0-rc0'
-	compile 'org.mongodb.morphia:morphia:0.105'
-	
-	testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.42'
-	testCompile "org.hamcrest:hamcrest-core:${hamcrestVersion}"
-	testCompile "org.hamcrest:hamcrest-library:${hamcrestVersion}"
-    testCompile 'junit:junit:4.11'
+  def hamcrestVersion = "1.3"
+  def jmockVersion = "2.6.0"
+  compile 'org.mongodb:mongo-java-driver:2.12.0-rc0'
+  compile 'org.mongodb.morphia:morphia:0.106'
+
+  testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.42'
+  testCompile "org.hamcrest:hamcrest-core:${hamcrestVersion}"
+  testCompile "org.hamcrest:hamcrest-library:${hamcrestVersion}"
+  testCompile "org.jmock:jmock:${jmockVersion}"
+  testCompile "org.jmock:jmock-junit4:${jmockVersion}"
+  testCompile 'junit:junit:4.11'
 }

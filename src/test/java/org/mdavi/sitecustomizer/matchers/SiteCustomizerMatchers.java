@@ -1,5 +1,6 @@
 package org.mdavi.sitecustomizer.matchers;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.hamcrest.Description;
@@ -10,7 +11,7 @@ import org.mdavi.sitecustomizer.model.Cobrand;
 public class SiteCustomizerMatchers
 {
 
-  public static Matcher<Cobrand> equalCobrandWithProperties (final String cobrandName, final Map<String, String> properties)
+  public static Matcher<Cobrand> equalCobrandWithProperties (final String cobrandName, final Map<String, Collection<String>> properties)
   {
     return new TypeSafeMatcher<Cobrand>()
     {
@@ -26,8 +27,8 @@ public class SiteCustomizerMatchers
         if(!cobrandName.equals(cobrand.getCobrand()))
           return false;
         for(final String property : properties.keySet()) {
-          final String expectedValue = properties.get(property);
-          if(!expectedValue.equals(cobrand.getValueFor(property)))
+          final Collection<String> expectedValue = properties.get(property);
+          if(!expectedValue.equals(cobrand.getValuesFor(property)))
             return false;
         }
         return true;

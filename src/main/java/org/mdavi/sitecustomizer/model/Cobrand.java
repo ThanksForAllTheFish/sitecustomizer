@@ -1,6 +1,7 @@
 package org.mdavi.sitecustomizer.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -17,18 +18,11 @@ public class Cobrand
   private String cobrand;
   
   @Embedded("properties")
-  private Collection<Map<String, String>> properties;
+  private Collection<Map<String, Collection<String>>> properties = Collections.emptySet();
   
-  @Override
-  public String toString ()
+  public Collection<String> getValuesFor (String property)
   {
-    
-    return cobrand;
-  }
-
-  public String getValueFor (String property)
-  {
-    Iterator<Map<String, String>> propertyIt = properties.iterator();
+    Iterator<Map<String, Collection<String>>> propertyIt = properties.iterator();
     if(propertyIt.hasNext())
       return propertyIt.next().get(property);
     return null;
