@@ -5,14 +5,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.jmock.Expectations;
 import org.junit.After;
 import org.junit.Test;
-import org.mdavi.sitecustomizer.MongoSiteCustomizer;
 import org.mdavi.sitecustomizer.services.Retriever;
 
 public class MongoSiteCustomizerTest extends MockableTest
@@ -83,13 +82,10 @@ public class MongoSiteCustomizerTest extends MockableTest
 
   private void givenACobrandAndAProperty (final String cobrand, final String property, final String... propertyValues)
   {
-    final List<String> values = new ArrayList<>();
-    for(String value : propertyValues)
-      values.add(value);
     context.checking(new Expectations()
     {
       {
-        oneOf(retriever).getProperties(cobrand, property); will(returnValue(values));
+        oneOf(retriever).getProperties(cobrand, property); will(returnValue(Arrays.asList(propertyValues)));
       }
     });
   }

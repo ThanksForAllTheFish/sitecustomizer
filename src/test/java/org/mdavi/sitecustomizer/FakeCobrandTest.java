@@ -1,14 +1,14 @@
-package org.mdavi.sitecustomizer.model;
+package org.mdavi.sitecustomizer;
 
 import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
+import org.mdavi.sitecustomizer.model.Cobrand;
 
 public abstract class FakeCobrandTest
 {
@@ -20,14 +20,9 @@ public abstract class FakeCobrandTest
     return cobrand;
   }
 
-  protected static Map<String, Collection<String>> buildFakeProperties () throws NoSuchFieldException, IllegalAccessException
+  private static Map<String, Collection<String>> buildFakeProperties () throws NoSuchFieldException, IllegalAccessException
   {
-    final Map<String, Collection<String>> props = new HashMap<>();
-    final Collection<String> values = new ArrayList<>();
-    values.add("value");
-    props.put("property", values);
-    
-    return props;
+    return Collections.singletonMap("property", (Collection<String>) Collections.singletonList("value"));
   }
 
   private static void inject (final Object source, final String fieldName, final Object value)

@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.Collection;
 
 import org.junit.Test;
+import org.mdavi.sitecustomizer.FakeCobrandTest;
 
 public class CobrandTest extends FakeCobrandTest
 {

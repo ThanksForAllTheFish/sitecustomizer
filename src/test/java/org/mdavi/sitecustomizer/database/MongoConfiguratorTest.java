@@ -2,9 +2,8 @@ package org.mdavi.sitecustomizer.database;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.mdavi.sitecustomizer.database.dao.CobrandDAO;
@@ -52,23 +51,18 @@ public abstract class MongoConfiguratorTest
   protected static void populateWithFakeData (DB db, BasicDBObject cobrand) throws UnknownHostException
   {
     final DBCollection col = db.getCollection("cobrands");
-    col.save(cobrand);
+    col.update(cobrand, cobrand, true, false);
   }
 
   protected static Map<String, Collection<String>> buildSingleProperty (String name, String value)
   {
-    final Map<String, Collection<String>> keys = new HashMap<>();
-    Collection<String> values = new ArrayList<>();
-    values.add(value);
-    keys.put(name, values);
-    return keys;
+    return Collections.singletonMap(name, (Collection<String>) Collections.singletonList(value));
   }
 
   protected static DB getMongoDb () throws UnknownHostException
   {
     final MongoClient mongo = new MongoClient(HOST, PORT);
-    final DB db = mongo.getDB(SITECUSTOMIZER_DB);
-    return db;
+    return mongo.getDB(SITECUSTOMIZER_DB);
   }
 
   protected static void configuredAndStartFakeMongoDb () throws UnknownHostException, IOException

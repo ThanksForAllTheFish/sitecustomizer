@@ -28,4 +28,18 @@ public class Cobrand
   {
     return cobrand;
   }
+
+  public String printableCobrand ()
+  {
+    return cobrand + " with properties [ " + properties + " ]";
+  }
+  
+  /**
+   * Override toString to make it usable in hamcrest matchers
+   */
+  @Override
+  public String toString ()
+  { 
+    return printableCobrand();
+  }
 }
