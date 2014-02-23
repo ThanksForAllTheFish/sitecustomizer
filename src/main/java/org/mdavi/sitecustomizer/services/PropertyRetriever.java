@@ -3,6 +3,7 @@ package org.mdavi.sitecustomizer.services;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.mdavi.sitecustomizer.model.Cobrand;
@@ -10,7 +11,7 @@ import org.mongodb.morphia.dao.DAO;
 
 public class PropertyRetriever implements Retriever
 {
-  private DAO<Cobrand, ObjectId> cobrandDAO;
+  private final DAO<Cobrand, ObjectId> cobrandDAO;
 
   public PropertyRetriever (DAO<Cobrand, ObjectId> cobrandDAO)
   {
@@ -33,7 +34,18 @@ public class PropertyRetriever implements Retriever
   @Override
   public List<String> getProperties (String cobrandName, String property)
   {
-    return getCobrandProperties(cobrandDAO.findOne("cobrand", cobrandName), property);
+    return getCobrandProperties(getCobrand(cobrandName), property);
+  }
+
+  @Override
+  public Set<String> getDomains (String cobrandName)
+  {
+    return getCobrand(cobrandName).getDomains();
+  }
+
+  private Cobrand getCobrand (String cobrandName)
+  {
+    return cobrandDAO.findOne("cobrand", cobrandName);
   }
 
   private List<String> getCobrandProperties (Cobrand cobrand, String property)

@@ -1,12 +1,17 @@
 package org.mdavi.sitecustomizer.services;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.hamcrest.Matcher;
 import org.jmock.Expectations;
 import org.junit.After;
 import org.junit.Test;
@@ -28,7 +33,7 @@ public class RetrieverServiceTest extends MockableTest
   @Test
   public void canRetrieveASinglePropertyValue () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName"), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
     
     final String value = whenLookingForAValue("cobrandName", "property");
     
@@ -38,7 +43,7 @@ public class RetrieverServiceTest extends MockableTest
   @Test
   public void canRetrieveASinglePropertyValue_fromPosition () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName"), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
     
     final String value = whenLookingForAValueInPosition("cobrandName", "property", 0);
     
@@ -48,21 +53,11 @@ public class RetrieverServiceTest extends MockableTest
   @Test
   public void canRetrieveAMultiPropertyValue () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName"), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
     
-    final Collection<String> value = whenLookingForAValues("cobrandName", "property");
+    final Collection<String> value = whenLookingForMultiValuesProperty("cobrandName", "property");
     
     thenTheRelativeValuesAreRetrieved(value, contains("value"));
-  }
-
-  private Collection<String> whenLookingForAValues (String cobrandName, String property)
-  {
-    return service.getProperties(cobrandName, property);
-  }
-
-  private String whenLookingForAValueInPosition (String cobrandName, String property, int position)
-  {
-    return service.getProperty(cobrandName, property, position);
   }
 
   @Test
@@ -77,11 +72,29 @@ public class RetrieverServiceTest extends MockableTest
   @Test
   public void canRetrieveNull_forNonExistentProperty () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName"), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
     
     final String value = whenLookingForAValue("cobrandName", "nonExistent");
     
     thenTheRelativeValuesAreRetrieved(value, nullValue());
+  }
+
+  @Test
+  public void canRetrieveDomains () throws NoSuchFieldException, IllegalAccessException {
+    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
+    
+    final Set<String> domains = whenLookingForItsDomains("cobrandName");
+    
+    thenTheRelativeDomainsAreRetrieved(domains, containsInAnyOrder("mdavi.org"));
+  }
+  
+  @Test
+  public void canRetrieveEmptyDomains () throws NoSuchFieldException, IllegalAccessException {
+    givenACobrand(prepareFakeCobrand("cobrandName", false), "cobrandName");
+    
+    final Set<String> domains = whenLookingForItsDomains("cobrandName");
+    
+    thenTheRelativeDomainsAreRetrieved(domains, emptyIterable());
   }
 
   private void givenACobrand (final Cobrand cobrand, final String cobrandName)
@@ -94,8 +107,29 @@ public class RetrieverServiceTest extends MockableTest
     });
   }
 
-  private String whenLookingForAValue (final String cobrand, final String property)
+  private String whenLookingForAValue (final String cobrandName, final String property)
   {
-    return service.getProperty(cobrand, property);
+    return service.getProperty(cobrandName, property);
+  }
+
+  private String whenLookingForAValueInPosition (String cobrandName, String property, int position)
+  {
+    return service.getProperty(cobrandName, property, position);
+  }
+
+  private Collection<String> whenLookingForMultiValuesProperty (String cobrandName, String property)
+  {
+    return service.getProperties(cobrandName, property);
+  }
+
+  private Set<String> whenLookingForItsDomains (String cobrandName)
+  {
+    return service.getDomains(cobrandName);
+  }
+
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private void thenTheRelativeDomainsAreRetrieved (Set<String> domains, Matcher expectedDomains)
+  {
+    assertThat(domains, expectedDomains);
   }
 }

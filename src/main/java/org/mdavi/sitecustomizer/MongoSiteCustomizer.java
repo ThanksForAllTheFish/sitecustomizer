@@ -1,12 +1,13 @@
-package org.mdavi.sitecustomizer;
+ package org.mdavi.sitecustomizer;
 
 import java.util.List;
+import java.util.Set;
 
 import org.mdavi.sitecustomizer.services.Retriever;
 
 public class MongoSiteCustomizer
 {
-  private Retriever retriever;
+  private final Retriever retriever;
 
   public MongoSiteCustomizer (Retriever retriever)
   {
@@ -29,6 +30,11 @@ public class MongoSiteCustomizer
     if(position >= 0 && position < values.size())
       return values.get(position);
     return null;
+  }
+
+  public Set<String> getDomains (String cobrandName)
+  {
+    return retriever.getDomains(cobrandName);
   }
 
 }

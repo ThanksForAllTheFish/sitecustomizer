@@ -6,7 +6,9 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.hamcrest.Matcher;
 import org.jmock.Expectations;
@@ -49,23 +51,13 @@ public class MongoSiteCustomizerTest extends MockableTest
   }
 
   @Test
-  public void returnNull ()
-  {
-    givenACobrandAndAProperty(COBRAND_NAME, PROPERTY_NAME);
-    
-    String nullValue = whenRetrievingNonExistentPropertyForCobrandAndPosition(COBRAND_NAME, PROPERTY_NAME, 3);
-  
-    thenNullIsReturned(nullValue);
-  }
-
-  @Test
   public void canRetrieveStringsMultiValue ()
   {
     givenACobrandAndAProperty(COBRAND_NAME, PROPERTY_NAME, VALUE_1, VALUE_2);
     
     List<String> value = whenRetrievingAPropertyWithMoreValuesForCobrand(COBRAND_NAME, PROPERTY_NAME);
   
-    thenAListOfValueIsRetrived(value);
+    thenAListOfValueIsRetrieved(value);
   }
 
   @Test
@@ -80,6 +72,26 @@ public class MongoSiteCustomizerTest extends MockableTest
     thenValueIsFirstInValues(values, value);
   }
 
+  @Test
+  public void returnNull ()
+  {
+    givenACobrandAndAProperty(COBRAND_NAME, PROPERTY_NAME);
+    
+    String nullValue = whenRetrievingNonExistentPropertyForCobrandAndPosition(COBRAND_NAME, PROPERTY_NAME, 3);
+  
+    thenNullIsReturned(nullValue);
+  }
+
+  @Test
+  public void returnCobrandDomains ()
+  {
+    givenACobrandWithDomains(COBRAND_NAME);
+    
+    Set<String> domains = whenRetrievingItsDomains(COBRAND_NAME);
+  
+    thenTheDomainsAreReturned(domains);
+  }
+  
   private void givenACobrandAndAProperty (final String cobrand, final String property, final String... propertyValues)
   {
     context.checking(new Expectations()
@@ -88,6 +100,17 @@ public class MongoSiteCustomizerTest extends MockableTest
         oneOf(retriever).getProperties(cobrand, property); will(returnValue(Arrays.asList(propertyValues)));
       }
     });
+  }
+
+  private void givenACobrandWithDomains (final String cobrandName)
+  {
+    context.checking(new Expectations()
+    {
+      {
+        oneOf(retriever).getDomains(cobrandName); will(returnValue(Collections.singleton("mdavi.org")));
+      }
+    });
+    
   }
 
   private String whenRetrievingExistentPropertyForCobrand (String cobrand, String property)
@@ -110,9 +133,14 @@ public class MongoSiteCustomizerTest extends MockableTest
     return siteCustomizer.getValues(cobrand, property);
   }
 
+  private Set<String> whenRetrievingItsDomains (String cobrandName)
+  {
+    return siteCustomizer.getDomains(cobrandName);
+  }
+
   private void thenValueIsFirstInValues (List<String> values, String value)
   {
-    thenAListOfValueIsRetrived(values);
+    thenAListOfValueIsRetrieved(values);
     thenThePropertyValueIsReturned(value, equalTo(VALUE_1));
   }
 
@@ -126,9 +154,14 @@ public class MongoSiteCustomizerTest extends MockableTest
     thenThePropertyValueIsReturned(nullValue, nullValue(String.class));;
   }
 
-  private void thenAListOfValueIsRetrived (List<String> value)
+  private void thenAListOfValueIsRetrieved (List<String> value)
   {
     assertThat(value, contains(VALUE_1, VALUE_2));
+  }
+
+  private void thenTheDomainsAreReturned (Set<String> domains)
+  {
+    assertThat(domains, contains("mdavi.org"));
   }
 
   private String getValueFor (String cobrand, String property, int position)

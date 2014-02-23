@@ -2,55 +2,25 @@ package org.mdavi.sitecustomizer.database;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.mdavi.sitecustomizer.matchers.SiteCustomizerMatchers.equalCobrandWithProperties;
+import static org.mdavi.sitecustomizer.matchers.SiteCustomizerMatchers.equalCobrandContainingPropertiesAndDomains;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mdavi.sitecustomizer.model.Cobrand;
 
-import com.mongodb.BasicDBObject;
-
-public class CobrandDAOTest extends MongoConfiguratorTest
+public class CobrandDAOTest extends MongoConfigurator
 {
   private Cobrand cobrand;
-
-  @BeforeClass
-  public static void setup () throws UnknownHostException, IOException
-  {
-    configuredAndStartFakeMongoDb();
-    
-    BasicDBObject rootObject = new BasicDBObject("cobrand", "NAME");
-    rootObject.append("properties", buildSingleProperty("aKey", "aValue"));
-    populateWithFakeData(getMongoDb(), rootObject);
-  }
-  
-  @Before
-  public void init () throws UnknownHostException, NoSuchFieldException, IllegalAccessException
-  {
-    configureMorphia();
-
-    setupCobrandDao();
-  }
-
-  @AfterClass
-  public static void teardown ()
-  {
-    if (mongodExecutable != null) mongodExecutable.stop();
-  }
 
   @Test
   public void canRetrieveExistingCobrand ()
   {
-    whenILookForAnExistingCobrand("NAME");
+    whenILookForAnExistingCobrand(EXISTING_COBRAND_NAME);
 
-    thenTheCobrandAndItsPropertiesAreLoaded("NAME", buildSingleProperty("aKey", "aValue"));
+    thenTheCobrandAndItsPropertiesAreLoaded(EXISTING_COBRAND_NAME, buildSingleProperty(SAMPLE_PROPERTY, SAMPLE_PROPERTY_VALUE), buildSingleDomain(SAMPLE_DOMAIN));
   }
   
   @Test
@@ -76,8 +46,8 @@ public class CobrandDAOTest extends MongoConfiguratorTest
     assertThat(cobrand, nullValue());
   }
 
-  private void thenTheCobrandAndItsPropertiesAreLoaded (String cobrandName, Map<String, Collection<String>> properties)
+  private void thenTheCobrandAndItsPropertiesAreLoaded (String cobrandName, Map<String, Collection<String>> properties, Set<String> domains)
   {
-    assertThat(cobrand, equalCobrandWithProperties(cobrandName, properties));
+    assertThat(cobrand, equalCobrandContainingPropertiesAndDomains(cobrandName, properties, domains));
   }
 }
