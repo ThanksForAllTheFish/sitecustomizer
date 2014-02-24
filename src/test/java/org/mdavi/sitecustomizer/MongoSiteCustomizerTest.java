@@ -71,17 +71,7 @@ public class MongoSiteCustomizerTest extends MockableTest
   
     thenValueIsFirstInValues(values, value);
   }
-
-  @Test
-  public void returnNull ()
-  {
-    givenACobrandAndAProperty(COBRAND_NAME, PROPERTY_NAME);
-    
-    String nullValue = whenRetrievingNonExistentPropertyForCobrandAndPosition(COBRAND_NAME, PROPERTY_NAME, 3);
   
-    thenNullIsReturned(nullValue);
-  }
-
   @Test
   public void returnCobrandDomains ()
   {
@@ -91,15 +81,35 @@ public class MongoSiteCustomizerTest extends MockableTest
   
     thenTheDomainsAreReturned(domains);
   }
-  
-  private void givenACobrandAndAProperty (final String cobrand, final String property, final String... propertyValues)
+
+  @Test
+  public void returnNull_dueTogNonExistentProperty ()
   {
-    context.checking(new Expectations()
-    {
-      {
-        oneOf(retriever).getProperties(cobrand, property); will(returnValue(Arrays.asList(propertyValues)));
-      }
-    });
+    givenACobrandAndANonExistentProperty(COBRAND_NAME, "NON_EXISTENT");
+    
+    String nullValue = whenRetrievingNonExistentPropertyForCobrandAndPosition(COBRAND_NAME, "NON_EXISTENT", 0);
+  
+    thenNullIsReturned(nullValue);
+  }
+
+  @Test
+  public void returnNull_dueToLowerBoundPosition ()
+  {
+    givenACobrandAndAProperty(COBRAND_NAME, PROPERTY_NAME, VALUE_1);
+    
+    String nullValue = whenRetrievingNonExistentPropertyForCobrandAndPosition(COBRAND_NAME, PROPERTY_NAME, -1);
+  
+    thenNullIsReturned(nullValue);
+  }
+
+  @Test
+  public void returnNull_dueToUpperBoundPosition ()
+  {
+    givenACobrandAndAProperty(COBRAND_NAME, PROPERTY_NAME, VALUE_1);
+    
+    String nullValue = whenRetrievingNonExistentPropertyForCobrandAndPosition(COBRAND_NAME, PROPERTY_NAME, 2);
+  
+    thenNullIsReturned(nullValue);
   }
 
   private void givenACobrandWithDomains (final String cobrandName)
@@ -111,6 +121,26 @@ public class MongoSiteCustomizerTest extends MockableTest
       }
     });
     
+  }
+
+  private void givenACobrandAndANonExistentProperty (final String cobrand, final String property)
+  {
+    context.checking(new Expectations()
+    {
+      {
+        oneOf(retriever).getProperties(cobrand, property); will(returnValue(null));
+      }
+    });
+  }
+
+  private void givenACobrandAndAProperty (final String cobrand, final String property, final String... propertyValues)
+  {
+    context.checking(new Expectations()
+    {
+      {
+        oneOf(retriever).getProperties(cobrand, property); will(returnValue(Arrays.asList(propertyValues)));
+      }
+    });
   }
 
   private String whenRetrievingExistentPropertyForCobrand (String cobrand, String property)

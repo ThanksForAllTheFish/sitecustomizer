@@ -35,6 +35,8 @@ public abstract class MongoConfigurator
   protected static final String   SAMPLE_PROPERTY_VALUE = "value";
   protected static final String   SAMPLE_PROPERTY       = "property";
   protected static final String   EXISTING_COBRAND_NAME = "NAME";
+  protected static final String PARENT_PROPERTY = "parentProperty";
+  protected static final String PARENT_COBRAND_NAME = "parent";
   
   private static final String     HOST                  = "localhost";
   private static final int        PORT                  = 12345;
@@ -51,10 +53,18 @@ public abstract class MongoConfigurator
   {
     configuredAndStartFakeMongoDb();
 
-    BasicDBObject rootObject = new BasicDBObject("cobrand", EXISTING_COBRAND_NAME);
-    rootObject.append("properties", buildSingleProperty(SAMPLE_PROPERTY, SAMPLE_PROPERTY_VALUE));
-    rootObject.append("domains", buildSingleDomain(SAMPLE_DOMAIN));
-    populateWithFakeData(getMongoDb(), rootObject);
+    DB mongoDb = getMongoDb();
+    
+    BasicDBObject parent = new BasicDBObject("cobrand", PARENT_COBRAND_NAME);
+    parent.append("properties", buildSingleProperty(PARENT_PROPERTY, SAMPLE_PROPERTY_VALUE));
+    populateWithFakeData(mongoDb, parent);
+
+    BasicDBObject cobrand = new BasicDBObject("cobrand", EXISTING_COBRAND_NAME);
+    cobrand.append("properties", buildSingleProperty(SAMPLE_PROPERTY, SAMPLE_PROPERTY_VALUE));
+    cobrand.append("domains", buildSingleDomain(SAMPLE_DOMAIN));
+    cobrand.append("parent", parent );
+    populateWithFakeData(mongoDb, cobrand);
+    
   }
 
   @AfterClass

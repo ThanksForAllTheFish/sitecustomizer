@@ -19,21 +19,21 @@ public abstract class FakeCobrandTest
     assertThat(value, expectedValue);
   }
 
-  protected static Cobrand prepareFakeCobrand (final String cobrandName, final boolean hasDomains)
+  protected static Cobrand prepareFakeCobrand (final String cobrandName, Map<String, Collection<String>> properties)
                                                                                                   throws NoSuchFieldException,
                                                                                                   IllegalAccessException
   {
     final Cobrand cobrand = new Cobrand();
     inject(cobrand, "cobrand", cobrandName);
-    inject(cobrand, "properties", buildFakeProperties());
-    if (hasDomains) inject(cobrand, "domains", buildFakeDomains());
+    inject(cobrand, "properties", properties);
+    inject(cobrand, "domains", buildFakeDomains());
     return cobrand;
   }
 
-  private static Map<String, Collection<String>> buildFakeProperties () throws NoSuchFieldException,
+  protected static Map<String, Collection<String>> buildFakeProperties (String propertyName, Collection<String> propertyValues) throws NoSuchFieldException,
                                                                        IllegalAccessException
   {
-    return Collections.singletonMap("property", (Collection<String>) Collections.singletonList("value"));
+    return Collections.singletonMap(propertyName, propertyValues);
   }
 
   private static Set<String> buildFakeDomains ()
@@ -41,7 +41,7 @@ public abstract class FakeCobrandTest
     return Collections.singleton("mdavi.org");
   }
 
-  private static void inject (final Object source, final String fieldName, final Object value)
+  protected static void inject (final Object source, final String fieldName, final Object value)
                                                                                               throws NoSuchFieldException,
                                                                                               IllegalAccessException
   {

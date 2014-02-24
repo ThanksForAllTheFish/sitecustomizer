@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.mdavi.sitecustomizer.matchers.SiteCustomizerMatchers.equalCobrandContainingPropertiesAndDomains;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,14 @@ public class CobrandDAOTest extends MongoConfigurator
   }
   
   @Test
+  public void canRetrieveParentCobrand ()
+  {
+    whenILookForTheParentCobrandOf(EXISTING_COBRAND_NAME);
+    
+    thenTheCobrandAndItsPropertiesAreLoaded(PARENT_COBRAND_NAME, buildSingleProperty(PARENT_PROPERTY, SAMPLE_PROPERTY_VALUE), Collections.<String>emptySet());
+  }
+  
+  @Test
   public void canRetrieveNull ()
   {
     whenILookForANonExistentCobrand("NONE");
@@ -31,14 +40,20 @@ public class CobrandDAOTest extends MongoConfigurator
     thenNullIsLoaded();
   }
   
-  private void whenILookForANonExistentCobrand (final String cobrandName)
-  {
-    whenILookForAnExistingCobrand(cobrandName);
-  }
-
   private void whenILookForAnExistingCobrand (final String cobrandName)
   {
     cobrand = dao.findOne("cobrand", cobrandName);
+  }
+
+  private void whenILookForTheParentCobrandOf (String existingCobrandName)
+  {
+    whenILookForAnExistingCobrand(existingCobrandName);
+    cobrand = cobrand.getParent();
+  }
+
+  private void whenILookForANonExistentCobrand (final String cobrandName)
+  {
+    whenILookForAnExistingCobrand(cobrandName);
   }
 
   private void thenNullIsLoaded ()

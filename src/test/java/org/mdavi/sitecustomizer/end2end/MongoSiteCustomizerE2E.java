@@ -42,4 +42,12 @@ public class MongoSiteCustomizerE2E extends MongoConfigurator
 
     assertThat(domains, contains(SAMPLE_DOMAIN));
   }
+  
+  @Test
+  public void retrievePropertyFromParent ()
+  {
+    String parentValue = siteCustomizer.getValue(EXISTING_COBRAND_NAME, PARENT_PROPERTY);
+
+    assertThat(parentValue, equalTo(SAMPLE_PROPERTY_VALUE));
+  }
 }

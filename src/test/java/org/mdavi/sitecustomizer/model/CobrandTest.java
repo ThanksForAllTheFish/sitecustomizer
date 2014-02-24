@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Test;
 import org.mdavi.sitecustomizer.FakeCobrandTest;
@@ -19,7 +20,7 @@ public class CobrandTest extends FakeCobrandTest
   @Test
   public void canRetrieveValues () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName", true));
+    givenACobrand(prepareFakeCobrand("cobrandName", buildFakeProperties("property", (Collection<String>) Collections.singletonList("value"))));
 
     whenILookForAKey("property");
 
@@ -35,15 +36,35 @@ public class CobrandTest extends FakeCobrandTest
 
     thenTheRelativeValuesAreRetrieved(this.value, nullValue(String.class));
   }
+  
+  @Test
+  public void canRetrieveFromParent () throws NoSuchFieldException, IllegalAccessException
+  {
+    givenACobrand(prepareCobrandWithParent());
+
+    whenILookForAKey("parentProperty");
+
+    thenTheRelativeValuesAreRetrieved(this.value, contains("value"));
+  }
 
   @Test
-  public void printIsHumanReadable () throws NoSuchFieldException, IllegalAccessException
+  public void printIsHumanReadable_withoutParent () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName", true));
+    givenACobrand(prepareFakeCobrand("cobrandName", buildFakeProperties("property", Collections.singletonList("value"))));
     
     final String cobrand = whenIPrintIt();
   
-    thenTheStringIsHumanReadable(cobrand);
+    thenTheStringIsHumanReadable(cobrand, "cobrandName with properties [ {property=[value]} ], with domains [mdavi.org]");
+  }
+  
+  @Test
+  public void printIsHumanReadable_withParent () throws NoSuchFieldException, IllegalAccessException
+  {
+    givenACobrand(prepareCobrandWithParent());
+    
+    final String cobrand = whenIPrintIt();
+  
+    thenTheStringIsHumanReadable(cobrand, "son with properties [ {property=[value]} ], with domains [mdavi.org], with parent parent");
   }
 
   private void givenACobrand (final Cobrand fakeCobrand)
@@ -66,9 +87,16 @@ public class CobrandTest extends FakeCobrandTest
     return cobrand.toString();
   }
 
-  private void thenTheStringIsHumanReadable (final String cobrand)
+  private void thenTheStringIsHumanReadable (final String cobrand, String expectedToString)
   {
-    assertThat(cobrand, equalTo("cobrandName with properties [ {property=[value]} ], with domains [mdavi.org]"));
+    assertThat(cobrand, equalTo(expectedToString));
+  }
+
+  private Cobrand prepareCobrandWithParent () throws NoSuchFieldException, IllegalAccessException
+  {
+    Cobrand cobrand = prepareFakeCobrand("son", buildFakeProperties("property", Collections.singletonList("value")));
+    inject(cobrand, "parent", prepareFakeCobrand("parent", buildFakeProperties("parentProperty", Collections.singletonList("value"))));
+    return cobrand;
   }
 
 }

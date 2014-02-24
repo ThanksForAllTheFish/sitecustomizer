@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
@@ -33,7 +34,7 @@ public class RetrieverServiceTest extends MockableTest
   @Test
   public void canRetrieveASinglePropertyValue () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", buildFakeProperties("property", Collections.singletonList("value"))), "cobrandName");
     
     final String value = whenLookingForAValue("cobrandName", "property");
     
@@ -43,7 +44,7 @@ public class RetrieverServiceTest extends MockableTest
   @Test
   public void canRetrieveASinglePropertyValue_fromPosition () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", buildFakeProperties("property", Collections.singletonList("value"))), "cobrandName");
     
     final String value = whenLookingForAValueInPosition("cobrandName", "property", 0);
     
@@ -53,7 +54,7 @@ public class RetrieverServiceTest extends MockableTest
   @Test
   public void canRetrieveAMultiPropertyValue () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", buildFakeProperties("property", Collections.singletonList("value"))), "cobrandName");
     
     final Collection<String> value = whenLookingForMultiValuesProperty("cobrandName", "property");
     
@@ -72,7 +73,7 @@ public class RetrieverServiceTest extends MockableTest
   @Test
   public void canRetrieveNull_forNonExistentProperty () throws NoSuchFieldException, IllegalAccessException
   {
-    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", buildFakeProperties("property", Collections.singletonList("value"))), "cobrandName");
     
     final String value = whenLookingForAValue("cobrandName", "nonExistent");
     
@@ -81,7 +82,7 @@ public class RetrieverServiceTest extends MockableTest
 
   @Test
   public void canRetrieveDomains () throws NoSuchFieldException, IllegalAccessException {
-    givenACobrand(prepareFakeCobrand("cobrandName", true), "cobrandName");
+    givenACobrand(prepareFakeCobrand("cobrandName", buildFakeProperties("property", Collections.singletonList("value"))), "cobrandName");
     
     final Set<String> domains = whenLookingForItsDomains("cobrandName");
     
@@ -90,7 +91,7 @@ public class RetrieverServiceTest extends MockableTest
   
   @Test
   public void canRetrieveEmptyDomains () throws NoSuchFieldException, IllegalAccessException {
-    givenACobrand(prepareFakeCobrand("cobrandName", false), "cobrandName");
+    givenACobrand(prepareFakeCobrandWithoutDomain(), "cobrandName");
     
     final Set<String> domains = whenLookingForItsDomains("cobrandName");
     
@@ -131,5 +132,12 @@ public class RetrieverServiceTest extends MockableTest
   private void thenTheRelativeDomainsAreRetrieved (Set<String> domains, Matcher expectedDomains)
   {
     assertThat(domains, expectedDomains);
+  }
+
+  private Cobrand prepareFakeCobrandWithoutDomain () throws NoSuchFieldException, IllegalAccessException
+  {
+    Cobrand cobrand = prepareFakeCobrand("cobrandName", buildFakeProperties("property", Collections.singletonList("value")));
+    inject(cobrand, "domains", Collections.emptySet());
+    return cobrand;
   }
 }

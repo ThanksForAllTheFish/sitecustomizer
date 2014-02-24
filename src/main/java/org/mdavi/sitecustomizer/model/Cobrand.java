@@ -23,6 +23,9 @@ public class Cobrand
   @Embedded("domains")
   private final Set<String> domains = Collections.emptySet();
   
+  @Embedded("parent")
+  private final Cobrand parent = null;
+  
   public String getCobrand ()
   {
     return cobrand;
@@ -30,17 +33,24 @@ public class Cobrand
 
   public Collection<String> getValuesFor (final String property)
   {
-    return properties.get(property);
+    Collection<String> values = properties.get(property);
+    if(null != parent && null == values) return parent.getValuesFor(property);
+    return values;
   }
 
   public Set<String> getDomains ()
   {
     return domains;
   }
+  
+  public Cobrand getParent ()
+  {
+    return parent;
+  }
 
   public String printableCobrand ()
   {
-    return cobrand + " with properties [ " + properties + " ], with domains " + domains;
+    return cobrand + " with properties [ " + properties + " ], with domains " + domains + parentString();
   }
   
   /**
@@ -50,5 +60,10 @@ public class Cobrand
   public String toString ()
   { 
     return printableCobrand();
+  }
+
+  private String parentString ()
+  {
+    return null == parent ? "" : ", with parent " + parent.cobrand;
   }
 }

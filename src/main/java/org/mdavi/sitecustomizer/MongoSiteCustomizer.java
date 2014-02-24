@@ -27,8 +27,7 @@ public class MongoSiteCustomizer
   public String getValue (String cobrand, String key, int position)
   {
     List<String> values = getValues(cobrand, key);
-    if(position >= 0 && position < values.size())
-      return values.get(position);
+    if (null != values && position >= 0 && position < values.size()) return values.get(position);
     return null;
   }
 
