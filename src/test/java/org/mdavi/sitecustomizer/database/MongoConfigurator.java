@@ -18,6 +18,7 @@ import org.mongodb.morphia.Morphia;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBRef;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 
@@ -58,13 +59,12 @@ public abstract class MongoConfigurator
     BasicDBObject parent = new BasicDBObject("cobrand", PARENT_COBRAND_NAME);
     parent.append("properties", buildSingleProperty(PARENT_PROPERTY, SAMPLE_PROPERTY_VALUE));
     populateWithFakeData(mongoDb, parent);
-
+    
     BasicDBObject cobrand = new BasicDBObject("cobrand", EXISTING_COBRAND_NAME);
     cobrand.append("properties", buildSingleProperty(SAMPLE_PROPERTY, SAMPLE_PROPERTY_VALUE));
     cobrand.append("domains", buildSingleDomain(SAMPLE_DOMAIN));
-    cobrand.append("parent", parent );
+    cobrand.append("parent", getParentRef(mongoDb, parent) );
     populateWithFakeData(mongoDb, cobrand);
-    
   }
 
   @AfterClass
@@ -123,6 +123,11 @@ public abstract class MongoConfigurator
   private void setupCobrandDao ()
   {
     dao = new CobrandDAO(morphia, mongo, SITECUSTOMIZER_DB);
+  }
+
+  private static DBRef getParentRef (DB mongoDb, BasicDBObject parent)
+  {
+    return new DBRef(mongoDb, "cobrands", mongoDb.getCollection("cobrands").findOne(parent).get("_id"));
   }
 
 }

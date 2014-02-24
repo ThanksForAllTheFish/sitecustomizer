@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Reference;
 
 @Entity(value = "cobrands", noClassnameStored = true)
 public class Cobrand
@@ -23,7 +24,7 @@ public class Cobrand
   @Embedded("domains")
   private final Set<String> domains = Collections.emptySet();
   
-  @Embedded("parent")
+  @Reference("parent")
   private final Cobrand parent = null;
   
   public String getCobrand ()
