@@ -42,7 +42,7 @@ public class CobrandDAOTest extends MongoConfigurator
   
   private void whenILookForAnExistingCobrand (final String cobrandName)
   {
-    cobrand = dao.findOne("cobrand", cobrandName);
+    cobrand = cobrandDAO.findOne("cobrand", cobrandName);
   }
 
   private void whenILookForTheParentCobrandOf (String existingCobrandName)

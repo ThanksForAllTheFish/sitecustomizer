@@ -23,7 +23,7 @@ public class MongoSiteCustomizerE2E extends MongoConfigurator
   public void init () throws UnknownHostException, NoSuchFieldException, IllegalAccessException
   {
     super.init();
-    retriever = new PropertyRetriever(dao);
+    retriever = new PropertyRetriever(cobrandDAO);
     siteCustomizer = new MongoSiteCustomizer(retriever);
   }
 
