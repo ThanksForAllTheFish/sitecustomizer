@@ -26,19 +26,18 @@ public abstract class FakeCobrandTest
     final Cobrand cobrand = new Cobrand();
     inject(cobrand, "cobrand", cobrandName);
     inject(cobrand, "properties", properties);
-    inject(cobrand, "domains", buildFakeDomains());
+    inject(cobrand, "domains", buildFakeDomains("mdavi.org"));
     return cobrand;
   }
 
-  protected static Map<String, Collection<String>> buildFakeProperties (String propertyName, Collection<String> propertyValues) throws NoSuchFieldException,
-                                                                       IllegalAccessException
+  protected static Map<String, Collection<String>> buildFakeProperties (String propertyName, Collection<String> propertyValues)
   {
     return Collections.singletonMap(propertyName, propertyValues);
   }
 
-  private static Set<String> buildFakeDomains ()
+  protected static Set<String> buildFakeDomains (String address)
   {
-    return Collections.singleton("mdavi.org");
+    return Collections.singleton(address);
   }
 
   protected static void inject (final Object source, final String fieldName, final Object value)

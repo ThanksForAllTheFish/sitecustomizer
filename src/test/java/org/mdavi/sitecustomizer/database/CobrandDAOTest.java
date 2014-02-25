@@ -21,7 +21,7 @@ public class CobrandDAOTest extends MongoConfigurator
   {
     whenILookForAnExistingCobrand(EXISTING_COBRAND_NAME);
 
-    thenTheCobrandAndItsPropertiesAreLoaded(EXISTING_COBRAND_NAME, buildSingleProperty(SAMPLE_PROPERTY, SAMPLE_PROPERTY_VALUE), buildSingleDomain(SAMPLE_DOMAIN));
+    thenTheCobrandAndItsPropertiesAreLoaded(EXISTING_COBRAND_NAME, buildSingleProperty(SAMPLE_PROPERTY, SAMPLE_PROPERTY_VALUE), buildFakeDomains(SAMPLE_DOMAIN));
   }
   
   @Test

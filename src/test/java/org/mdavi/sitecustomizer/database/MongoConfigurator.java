@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.mdavi.sitecustomizer.FakeCobrandTest;
 import org.mdavi.sitecustomizer.database.dao.CobrandDAO;
 import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mongodb.morphia.Morphia;
@@ -30,7 +29,7 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 
-public abstract class MongoConfigurator
+public abstract class MongoConfigurator extends FakeCobrandTest
 {
   protected static final String   SAMPLE_DOMAIN         = "mdavi.org";
   protected static final String   SAMPLE_PROPERTY_VALUE = "value";
@@ -62,9 +61,11 @@ public abstract class MongoConfigurator
     
     BasicDBObject cobrand = new BasicDBObject("cobrand", EXISTING_COBRAND_NAME);
     cobrand.append("properties", buildSingleProperty(SAMPLE_PROPERTY, SAMPLE_PROPERTY_VALUE));
-    cobrand.append("domains", buildSingleDomain(SAMPLE_DOMAIN));
+    cobrand.append("domains", buildFakeDomains(SAMPLE_DOMAIN));
     cobrand.append("parent", getParentRef(mongoDb, parent) );
     populateWithFakeData(mongoDb, cobrand);
+    
+    mongoDb.getCollection("cobrands").createIndex(new BasicDBObject("cobrand", 1));
   }
 
   @AfterClass
@@ -81,14 +82,9 @@ public abstract class MongoConfigurator
     setupCobrandDao();
   }
 
-  protected static Set<String> buildSingleDomain (String domain)
-  {
-    return Collections.singleton(domain);
-  }
-
   protected static Map<String, Collection<String>> buildSingleProperty (String name, String value)
   {
-    return new HashMap<>(Collections.singletonMap(name, (Collection<String>) Collections.singletonList(value)));
+    return buildFakeProperties(name, Collections.singletonList(value));
   }
 
   private static void configuredAndStartFakeMongoDb () throws UnknownHostException, IOException
