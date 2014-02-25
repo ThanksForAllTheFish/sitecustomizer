@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.hamcrest.Matcher;
 import org.mdavi.sitecustomizer.model.Cobrand;
+import org.mdavi.sitecustomizer.model.Domain;
 
 public abstract class FakeCobrandTest
 {
@@ -40,6 +41,14 @@ public abstract class FakeCobrandTest
     return Collections.singleton(address);
   }
 
+  protected static Domain buildFakeDomain (String address) throws NoSuchFieldException, IllegalAccessException
+  {
+    Domain domain = new Domain();
+    inject(domain, "address", address);
+    inject(domain, "institutional", prepareFakeCobrand("cobrand", Collections.<String, Collection<String>>emptyMap()));
+    return domain;
+  }
+  
   protected static void inject (final Object source, final String fieldName, final Object value)
                                                                                               throws NoSuchFieldException,
                                                                                               IllegalAccessException

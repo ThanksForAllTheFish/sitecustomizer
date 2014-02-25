@@ -70,7 +70,7 @@ public abstract class MongoConfigurator extends FakeCobrandTest
     populateCollectionWithFakeData(mongoDb, cobrand, "cobrands");
     
     BasicDBObject domain = new BasicDBObject("address", SAMPLE_DOMAIN);
-    domain.append("istitutional", getRef(mongoDb, "cobrands", mongoDb.getCollection("cobrands").findOne(cobrand)));
+    domain.append("institutional", getRef(mongoDb, "cobrands", mongoDb.getCollection("cobrands").findOne(cobrand)));
     populateCollectionWithFakeData(mongoDb, domain, "domains");
     
     mongoDb.getCollection("cobrands").createIndex(new BasicDBObject("cobrand", 1));

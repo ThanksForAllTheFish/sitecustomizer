@@ -6,30 +6,31 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hamcrest.Matcher;
 import org.jmock.Expectations;
-import org.junit.After;
 import org.junit.Test;
+import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mdavi.sitecustomizer.services.Retriever;
+import org.mdavi.sitecustomizer.services.implementations.ICobrandRetriever;
 
 public class MongoSiteCustomizerTest extends MockableTest
 {
+  private static final Map<String, Collection<String>> EMPTY_PROPERTIES = Collections.<String, Collection<String>>emptyMap();
+  private static final String DOMAIN_ADDRESS = "mdavi.org";
   private static final String VALUE_2 = "value2";
   private static final String VALUE_1 = "value1";
   private static final String PROPERTY_NAME = "property";
   private static final String COBRAND_NAME = "cobrand";
-  private Retriever retriever = context.mock(Retriever.class);
-  private MongoSiteCustomizer siteCustomizer = new MongoSiteCustomizer(retriever);
+  private Retriever propertRetriever = context.mock(Retriever.class);
+  private ICobrandRetriever cobrandRetriever = context.mock(ICobrandRetriever.class);
+  private MongoSiteCustomizer siteCustomizer = new MongoSiteCustomizer(propertRetriever, cobrandRetriever);
   
-  @After
-  public void teardown() {
-    context.assertIsSatisfied();
-  }
-
   @Test
   public void canRetrieveAStringSingleValue ()
   {
@@ -111,13 +112,38 @@ public class MongoSiteCustomizerTest extends MockableTest
   
     thenNullIsReturned(nullValue);
   }
+  
+  @Test
+  public void canRetrieveACobrandName () throws NoSuchFieldException, IllegalAccessException
+  {
+    givenADomain(DOMAIN_ADDRESS, prepareFakeCobrand(COBRAND_NAME, EMPTY_PROPERTIES));
+    
+    String cobrandName = whenLookingForItsInstitutionalCobrand(DOMAIN_ADDRESS);
+  
+    thenTheNameIsRetrieved(cobrandName);
+  }
+  
+  @Test
+  public void returnNull () throws NoSuchFieldException, IllegalAccessException
+  {
+    givenADomainWithoutCobrand(DOMAIN_ADDRESS);
+    
+    String cobrandName = whenLookingForItsInstitutionalCobrand(DOMAIN_ADDRESS);
+  
+    thenNullIsReturned(cobrandName);
+  }
+
+  private void givenADomainWithoutCobrand (String domainAddress) throws NoSuchFieldException, IllegalAccessException
+  {
+    givenADomain(domainAddress, null);
+  }
 
   private void givenACobrandWithDomains (final String cobrandName)
   {
     context.checking(new Expectations()
     {
       {
-        oneOf(retriever).getDomains(cobrandName); will(returnValue(Collections.singleton("mdavi.org")));
+        oneOf(propertRetriever).getDomains(cobrandName); will(returnValue(Collections.singleton(DOMAIN_ADDRESS)));
       }
     });
     
@@ -128,7 +154,7 @@ public class MongoSiteCustomizerTest extends MockableTest
     context.checking(new Expectations()
     {
       {
-        oneOf(retriever).getProperties(cobrand, property); will(returnValue(null));
+        oneOf(propertRetriever).getProperties(cobrand, property); will(returnValue(null));
       }
     });
   }
@@ -138,9 +164,20 @@ public class MongoSiteCustomizerTest extends MockableTest
     context.checking(new Expectations()
     {
       {
-        oneOf(retriever).getProperties(cobrand, property); will(returnValue(Arrays.asList(propertyValues)));
+        oneOf(propertRetriever).getProperties(cobrand, property); will(returnValue(Arrays.asList(propertyValues)));
       }
     });
+  }
+
+  private void givenADomain (final String address, final Cobrand cobrand) throws NoSuchFieldException, IllegalAccessException
+  {
+    context.checking(new Expectations()
+    {
+      {
+        oneOf(cobrandRetriever).findInstitutionalCobrand(address); will(returnValue(cobrand));
+      }
+    });
+    
   }
 
   private String whenRetrievingExistentPropertyForCobrand (String cobrand, String property)
@@ -168,6 +205,11 @@ public class MongoSiteCustomizerTest extends MockableTest
     return siteCustomizer.getDomains(cobrandName);
   }
 
+  private String whenLookingForItsInstitutionalCobrand (String address)
+  {
+    return siteCustomizer.getInstitutionalCobrandFor(address);
+  }
+
   private void thenValueIsFirstInValues (List<String> values, String value)
   {
     thenAListOfValueIsRetrieved(values);
@@ -191,7 +233,12 @@ public class MongoSiteCustomizerTest extends MockableTest
 
   private void thenTheDomainsAreReturned (Set<String> domains)
   {
-    assertThat(domains, contains("mdavi.org"));
+    assertThat(domains, contains(DOMAIN_ADDRESS));
+  }
+
+  private void thenTheNameIsRetrieved (String cobrandName)
+  {
+    assertThat(cobrandName, equalTo(COBRAND_NAME));
   }
 
   private String getValueFor (String cobrand, String property, int position)

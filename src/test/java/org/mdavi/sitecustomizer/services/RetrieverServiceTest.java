@@ -18,13 +18,14 @@ import org.junit.After;
 import org.junit.Test;
 import org.mdavi.sitecustomizer.MockableTest;
 import org.mdavi.sitecustomizer.model.Cobrand;
+import org.mdavi.sitecustomizer.services.implementations.PropertyRetriever;
 import org.mongodb.morphia.dao.DAO;
 
 public class RetrieverServiceTest extends MockableTest
 {
   @SuppressWarnings("unchecked")
-  private final DAO<Cobrand, ObjectId> dao = context.mock(DAO.class);
-  private final Retriever service = new PropertyRetriever(dao);
+  private final DAO<Cobrand, ObjectId> cobrandDAO = context.mock(DAO.class);
+  private final Retriever service = new PropertyRetriever(cobrandDAO);
   
   @After
   public void tearDown () {
@@ -97,13 +98,13 @@ public class RetrieverServiceTest extends MockableTest
     
     thenTheRelativeDomainsAreRetrieved(domains, emptyIterable());
   }
-
+  
   private void givenACobrand (final Cobrand cobrand, final String cobrandName)
   {
     context.checking(new Expectations()
     {
       {
-        oneOf(dao).findOne("cobrand", cobrandName); will(returnValue(cobrand));
+        oneOf(cobrandDAO).findOne("cobrand", cobrandName); will(returnValue(cobrand));
       }
     });
   }

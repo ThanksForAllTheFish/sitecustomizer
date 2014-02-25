@@ -13,16 +13,16 @@ public class Domain
   
   private final String address = null;
   
-  @Reference("istitutional")
-  private final Cobrand istitutional = null;
+  @Reference("institutional")
+  private final Cobrand institutional = null;
   
   public String getAddress ()
   {
     return address;
   }
   
-  public Cobrand getIstitutional ()
+  public Cobrand getInstitutional ()
   {
-    return istitutional;
+    return institutional;
   }
 }

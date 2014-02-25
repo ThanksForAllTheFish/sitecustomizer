@@ -1,4 +1,4 @@
-package org.mdavi.sitecustomizer.services;
+package org.mdavi.sitecustomizer.services.implementations;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.mdavi.sitecustomizer.model.Cobrand;
+import org.mdavi.sitecustomizer.services.Retriever;
 import org.mongodb.morphia.dao.DAO;
 
 public class PropertyRetriever implements Retriever

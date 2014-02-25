@@ -3,15 +3,19 @@
 import java.util.List;
 import java.util.Set;
 
+import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mdavi.sitecustomizer.services.Retriever;
+import org.mdavi.sitecustomizer.services.implementations.ICobrandRetriever;
 
 public class MongoSiteCustomizer
 {
-  private final Retriever retriever;
+  private final Retriever propertyRetriever;
+  private ICobrandRetriever cobrandRetriever;
 
-  public MongoSiteCustomizer (Retriever retriever)
+  public MongoSiteCustomizer (Retriever retriever, ICobrandRetriever cobrandRetriever)
   {
-    this.retriever = retriever;
+    this.propertyRetriever = retriever;
+    this.cobrandRetriever = cobrandRetriever;
   }
 
   public String getValue (String cobrand, String key)
@@ -21,7 +25,7 @@ public class MongoSiteCustomizer
   
   public List<String> getValues (String cobrand, String key)
   {
-    return retriever.getProperties(cobrand, key);
+    return propertyRetriever.getProperties(cobrand, key);
   }
 
   public String getValue (String cobrand, String key, int position)
@@ -33,7 +37,13 @@ public class MongoSiteCustomizer
 
   public Set<String> getDomains (String cobrandName)
   {
-    return retriever.getDomains(cobrandName);
+    return propertyRetriever.getDomains(cobrandName);
+  }
+
+  public String getInstitutionalCobrandFor (String address)
+  {
+    Cobrand cobrand = cobrandRetriever.findInstitutionalCobrand(address);
+    return null == cobrand ? null : cobrand.getCobrand();
   }
 
 }
