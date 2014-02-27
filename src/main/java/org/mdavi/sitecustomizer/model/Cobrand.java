@@ -16,26 +16,43 @@ public class Cobrand
 {
   @Id private final ObjectId id = ObjectId.get();
   
-  private final String cobrand = null;
+  private final String cobrand;
   
   @Embedded("properties")
-  private final Map<String, Collection<String>> properties = Collections.emptyMap();
+  private final Map<String, Collection<String>> properties;
 
   @Embedded("domains")
-  private final Set<String> domains = Collections.emptySet();
+  private final Set<String> domains;
   
   @Reference("parent")
-  private final Cobrand parent = null;
+  private final Cobrand parent;
   
+  public Cobrand() {
+    this(null, Collections.<String, Collection<String>>emptyMap(), Collections.<String>emptySet());
+  }
+  
+  public Cobrand (String cobrand, Map<String, Collection<String>> props, Set<String> domains)
+  {
+    this.cobrand = cobrand;
+    properties = props;
+    this.domains = domains;
+    parent = null;
+  }
+
   public String getCobrand ()
   {
     return cobrand;
+  }
+  
+  public Map<String, Collection<String>> getProperties ()
+  {
+    return properties;
   }
 
   public Collection<String> getValuesFor (final String property)
   {
     Collection<String> values = properties.get(property);
-    if(null != parent && null == values) return parent.getValuesFor(property);
+    if(hasParent() && null == values) return parent.getValuesFor(property);
     return values;
   }
 
@@ -66,5 +83,15 @@ public class Cobrand
   private String parentString ()
   {
     return null == parent ? "" : ", with parent " + parent.cobrand;
+  }
+
+  public boolean hasDomains ()
+  {
+    return !domains.isEmpty();
+  }
+
+  public boolean hasParent ()
+  {
+    return null != parent;
   }
 }

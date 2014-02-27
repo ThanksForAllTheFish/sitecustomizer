@@ -14,7 +14,6 @@ import org.mdavi.sitecustomizer.MockableTest;
 import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mdavi.sitecustomizer.model.Domain;
 import org.mdavi.sitecustomizer.services.implementations.CobrandRetriever;
-import org.mdavi.sitecustomizer.services.implementations.ICobrandRetriever;
 import org.mongodb.morphia.dao.DAO;
 
 public class CobrandRetrieverTest extends MockableTest
