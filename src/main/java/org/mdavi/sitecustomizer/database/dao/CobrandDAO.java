@@ -10,13 +10,14 @@ import org.mongodb.morphia.query.UpdateOperations;
 
 import com.mongodb.Mongo;
 
-public class CobrandDAO extends BasicDAO<Cobrand, ObjectId>
+public class CobrandDAO extends BasicDAO<Cobrand, ObjectId> implements ICobrandDAO
 {
   public CobrandDAO (final Morphia morphia, final Mongo mongo, final String dbName)
   {
     super(mongo, morphia, dbName);
   }
 
+  @Override
   public void upsert (Cobrand cobrand)
   {
     Datastore ds = getDatastore();
@@ -27,13 +28,16 @@ public class CobrandDAO extends BasicDAO<Cobrand, ObjectId>
     if(null == existing) save(cobrand);
     else 
     {
-      UpdateOperations<Cobrand> updateOperations = ds.createUpdateOperations(getEntityClass()).set("properties", cobrand.getProperties());
+      UpdateOperations<Cobrand> updateOperations = ds.createUpdateOperations(getEntityClass());
+      
+      if(cobrand.hasProperties())
+        updateOperations.set("properties", cobrand.getProperties());
       
       if(cobrand.hasDomains())
-        updateOperations.add("domains", cobrand.getDomains());
+        updateOperations.set("domains", cobrand.getDomains());
       
       if(cobrand.hasParent())
-        updateOperations.add("parent", cobrand.getParent());
+        updateOperations.set("parent", cobrand.getParent());
       
       update(query, updateOperations);
     }

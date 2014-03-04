@@ -33,10 +33,15 @@ public class Cobrand
   
   public Cobrand (String cobrand, Map<String, Collection<String>> props, Set<String> domains)
   {
+    this(cobrand, props, domains, null);
+  }
+
+  public Cobrand (String cobrand, Map<String, Collection<String>> props, Set<String> domains, Cobrand parent)
+  {
     this.cobrand = cobrand;
     properties = props;
     this.domains = domains;
-    parent = null;
+    this.parent = parent;
   }
 
   public String getCobrand ()
@@ -87,11 +92,16 @@ public class Cobrand
 
   public boolean hasDomains ()
   {
-    return !domains.isEmpty();
+    return null != domains && !domains.isEmpty();
   }
 
   public boolean hasParent ()
   {
     return null != parent;
+  }
+
+  public boolean hasProperties ()
+  {
+    return null != properties && !properties.isEmpty();
   }
 }

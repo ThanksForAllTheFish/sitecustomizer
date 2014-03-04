@@ -1,6 +1,7 @@
 package org.mdavi.sitecustomizer.services;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mdavi.sitecustomizer.matchers.SiteCustomizerMatchers.looseEqual;
 
@@ -18,6 +19,7 @@ public class CobrandCreatorTest extends MongoConfigurator
 {
   private static final String SECONDCOBRANDTEST = "SECONDCOBRANDTEST";
   private static final String COBRANDTEST = "COBRANDTEST";
+  private static final String WITHPARENT = "CBWITHPARENT";
   private Properties properties;
   private CobrandCreator creator;
   
@@ -43,9 +45,29 @@ public class CobrandCreatorTest extends MongoConfigurator
     
     Cobrand cobrand = cobrandDAO.findOne("cobrand", COBRANDTEST);
     
-    System.err.println(cobrand.getValuesFor("ARTICLE_CONFIGURATION_QUOTE_1"));
+    assertThat(cobrand, looseEqual(COBRANDTEST, 33, 2));
+  }
+  
+  @Test
+  public void canLoadDomains () throws IOException
+  {
+    creator.importProperties(properties);
     
-    assertThat(cobrand, looseEqual(COBRANDTEST, 33, 0));
+    Cobrand cobrand = cobrandDAO.findOne("cobrand", COBRANDTEST);
+    
+    assertThat(cobrand.getDomains(), contains("cobrandtest.com", "www.cobrandtest.com"));
+  }
+  
+  @Test
+  public void canLoadParent () throws IOException
+  {
+    creator.importProperties(properties);
+    
+    Cobrand cobrand = cobrandDAO.findOne("cobrand", WITHPARENT);
+    
+    assertThat(cobrand.getParent().getCobrand(), equalTo(COBRANDTEST));
+    assertThat(cobrand.getValuesFor("CAR_ENABLED"), contains("false"));
+    
   }
   
   @Test
@@ -85,7 +107,7 @@ public class CobrandCreatorTest extends MongoConfigurator
     Cobrand cobrandTest = cobrandDAO.findOne("cobrand", COBRANDTEST);
     Cobrand secondCobrandTest = cobrandDAO.findOne("cobrand", SECONDCOBRANDTEST);
     
-    assertThat(cobrandTest, looseEqual(COBRANDTEST, 33, 0));
+    assertThat(cobrandTest, looseEqual(COBRANDTEST, 33, 2));
     assertThat(secondCobrandTest, looseEqual(SECONDCOBRANDTEST, 23, 0));
   }
 }

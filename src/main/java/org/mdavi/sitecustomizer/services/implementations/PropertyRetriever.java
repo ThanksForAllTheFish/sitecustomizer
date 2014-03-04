@@ -5,16 +5,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.bson.types.ObjectId;
+import org.mdavi.sitecustomizer.database.dao.ICobrandDAO;
 import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mdavi.sitecustomizer.services.Retriever;
-import org.mongodb.morphia.dao.DAO;
 
 public class PropertyRetriever implements Retriever
 {
-  private final DAO<Cobrand, ObjectId> cobrandDAO;
+  private final ICobrandDAO cobrandDAO;
 
-  public PropertyRetriever (DAO<Cobrand, ObjectId> cobrandDAO)
+  public PropertyRetriever (ICobrandDAO cobrandDAO)
   {
     this.cobrandDAO = cobrandDAO;
   }
