@@ -1,5 +1,6 @@
 package org.mdavi.sitecustomizer.database.dao;
 
+import static org.mdavi.sitecustomizer.model.Cobrand.*;
 import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newArrayList;
 
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class CobrandDAO extends BasicDAO<Cobrand, ObjectId> implements ICobrandD
   public void upsert (Cobrand cobrand)
   {
     Datastore ds = getDatastore();
-    Query<Cobrand> query = ds.createQuery(getEntityClass()).field("cobrand").equal(cobrand.getCobrand());
+    Query<Cobrand> query = ds.createQuery(getEntityClass()).field(FIELD_ID).equal(cobrand.getCobrand());
     
     Cobrand existing = findOne(query);
     
@@ -39,15 +40,15 @@ public class CobrandDAO extends BasicDAO<Cobrand, ObjectId> implements ICobrandD
         Map<String, Collection<String>> properties = cobrand.getProperties();
         for(String property : properties.keySet()) {
           Collection<String> values = properties.get(property);
-          updateOperations.set("properties." + property, values);
+          updateOperations.set(FIELD_PROPERTIES + "." + property, values);
         }
       }
       
       if(cobrand.hasDomains())
-        updateOperations.addAll("domains", newArrayList(cobrand.getDomains()), false);
+        updateOperations.addAll(FIELD_DOMAINS, newArrayList(cobrand.getDomains()), false);
       
       if(cobrand.hasParent())
-        updateOperations.set("parent", cobrand.getParent());
+        updateOperations.set(FIELD_PARENT, cobrand.getParent());
       
       update(query, updateOperations);
     }

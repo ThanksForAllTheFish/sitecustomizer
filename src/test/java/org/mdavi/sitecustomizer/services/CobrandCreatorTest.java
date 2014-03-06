@@ -17,6 +17,7 @@ import org.mdavi.sitecustomizer.services.implementations.CobrandCreator;
 
 public class CobrandCreatorTest extends MongoConfigurator
 {
+  private static final String FIELD_ID = "cobrand";
   private static final String SECONDCOBRANDTEST = "SECONDCOBRANDTEST";
   private static final String COBRANDTEST = "COBRANDTEST";
   private static final String WITHPARENT = "CBWITHPARENT";
@@ -43,7 +44,7 @@ public class CobrandCreatorTest extends MongoConfigurator
   {
     creator.importProperties(properties);
     
-    Cobrand cobrand = cobrandDAO.findOne("cobrand", COBRANDTEST);
+    Cobrand cobrand = cobrandDAO.findOne(FIELD_ID, COBRANDTEST);
     
     assertThat(cobrand, looseEqual(COBRANDTEST, 33, 2));
   }
@@ -53,7 +54,7 @@ public class CobrandCreatorTest extends MongoConfigurator
   {
     creator.importProperties(properties);
     
-    Cobrand cobrand = cobrandDAO.findOne("cobrand", COBRANDTEST);
+    Cobrand cobrand = cobrandDAO.findOne(FIELD_ID, COBRANDTEST);
     
     assertThat(cobrand.getDomains(), contains("cobrandtest.com", "www.cobrandtest.com"));
   }
@@ -63,7 +64,7 @@ public class CobrandCreatorTest extends MongoConfigurator
   {
     creator.importProperties(properties);
     
-    Cobrand cobrand = cobrandDAO.findOne("cobrand", WITHPARENT);
+    Cobrand cobrand = cobrandDAO.findOne(FIELD_ID, WITHPARENT);
     
     assertThat(cobrand.getParent().getCobrand(), equalTo(COBRANDTEST));
     assertThat(cobrand.getValuesFor("CAR_ENABLED"), contains("false"));
@@ -75,7 +76,7 @@ public class CobrandCreatorTest extends MongoConfigurator
   {
     creator.importProperties(properties);
     
-    Cobrand cobrand = cobrandDAO.findOne("cobrand", COBRANDTEST);
+    Cobrand cobrand = cobrandDAO.findOne(FIELD_ID, COBRANDTEST);
     
     assertThat(cobrand.getValuesFor("ABBA_GROUP"), contains( "cobrandtest" ));
   }
@@ -85,7 +86,7 @@ public class CobrandCreatorTest extends MongoConfigurator
   {
     creator.importProperties(properties);
     
-    Cobrand cobrand = cobrandDAO.findOne("cobrand", COBRANDTEST);
+    Cobrand cobrand = cobrandDAO.findOne(FIELD_ID, COBRANDTEST);
     
     assertThat(cobrand.getValuesFor("CALLCENTER_INSURANCE_PHONENUMBER"), contains( "19948104", "lun-dom 24 ore su 24", "EUR 0,12" ));
   }
@@ -95,7 +96,7 @@ public class CobrandCreatorTest extends MongoConfigurator
   {
     creator.importProperties(properties);
     
-    Cobrand cobrand = cobrandDAO.findOne("cobrand", COBRANDTEST);
+    Cobrand cobrand = cobrandDAO.findOne(FIELD_ID, COBRANDTEST);
     
     assertThat(cobrand.getValuesFor("ABBA_GROUP"), contains( "cobrandtest" ));
   }
@@ -104,8 +105,8 @@ public class CobrandCreatorTest extends MongoConfigurator
   public void cobrandsDoNotInterleave () {
     creator.importProperties(properties);
     
-    Cobrand cobrandTest = cobrandDAO.findOne("cobrand", COBRANDTEST);
-    Cobrand secondCobrandTest = cobrandDAO.findOne("cobrand", SECONDCOBRANDTEST);
+    Cobrand cobrandTest = cobrandDAO.findOne(FIELD_ID, COBRANDTEST);
+    Cobrand secondCobrandTest = cobrandDAO.findOne(FIELD_ID, SECONDCOBRANDTEST);
     
     assertThat(cobrandTest, looseEqual(COBRANDTEST, 33, 2));
     assertThat(secondCobrandTest, looseEqual(SECONDCOBRANDTEST, 23, 0));

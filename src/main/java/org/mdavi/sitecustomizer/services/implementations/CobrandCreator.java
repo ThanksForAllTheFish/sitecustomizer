@@ -1,5 +1,6 @@
 package org.mdavi.sitecustomizer.services.implementations;
 
+import static org.mdavi.sitecustomizer.model.Cobrand.FIELD_ID;
 import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newHashMap;
 import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newTreeMap;
 import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newTreeSet;
@@ -80,7 +81,7 @@ public class CobrandCreator
     }
     
     for(String son : sonToParent.keySet()) {
-      Cobrand parent = cobrandDAO.findOne("cobrand", sonToParent.get(son));
+      Cobrand parent = cobrandDAO.findOne(FIELD_ID, sonToParent.get(son));
       cobrandDAO.upsert(new Cobrand(son, Collections.<String, Collection<String>>emptyMap(), Collections.<String>emptySet(), parent));
     }
   }

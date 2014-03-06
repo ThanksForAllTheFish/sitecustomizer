@@ -16,10 +16,10 @@ public class DomainDAOTest extends MongoConfigurator
   @Test
   public void canRetrieveADomain ()
   {
-    Domain domain = domainDAO.findOne("address", "mdavi.org");
+    Domain domain = domainDAO.findOne("address", SAMPLE_DOMAIN);
     
-    assertThat(domain.getAddress(), equalTo("mdavi.org"));
-    assertThat(domain.getInstitutional(), equalCobrandContainingPropertiesAndDomains("NAME", Collections.<String, Collection<String>>emptyMap(), buildFakeDomains("mdavi.org")));
+    assertThat(domain.getAddress(), equalTo(SAMPLE_DOMAIN));
+    assertThat(domain.getInstitutional(), equalCobrandContainingPropertiesAndDomains(EXISTING_COBRAND_NAME, Collections.<String, Collection<String>>emptyMap(), buildFakeDomains(SAMPLE_DOMAIN)));
   }
 
 }

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
@@ -14,17 +13,21 @@ import org.mongodb.morphia.annotations.Reference;
 @Entity(value = "cobrands", noClassnameStored = true)
 public class Cobrand
 {
-  @Id private final ObjectId id = ObjectId.get();
+  public static final String FIELD_ID = "cobrand";
+  public static final String FIELD_PROPERTIES = "properties";
+  public static final String FIELD_DOMAINS = "domains";
+  public static final String FIELD_PARENT = "parent";
   
+  @Id
   private final String cobrand;
   
-  @Embedded("properties")
+  @Embedded(FIELD_PROPERTIES)
   private final Map<String, Collection<String>> properties;
 
-  @Embedded("domains")
+  @Embedded(FIELD_DOMAINS)
   private final Set<String> domains;
   
-  @Reference("parent")
+  @Reference(FIELD_PARENT)
   private final Cobrand parent;
   
   public Cobrand() {

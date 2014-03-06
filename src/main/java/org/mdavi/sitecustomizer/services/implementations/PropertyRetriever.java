@@ -1,5 +1,6 @@
 package org.mdavi.sitecustomizer.services.implementations;
 
+import static org.mdavi.sitecustomizer.model.Cobrand.FIELD_ID;
 import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newArrayList;
 
 import java.util.Collection;
@@ -46,7 +47,7 @@ public class PropertyRetriever implements Retriever
 
   private Cobrand getCobrand (String cobrandName)
   {
-    return cobrandDAO.findOne("cobrand", cobrandName);
+    return cobrandDAO.findOne(FIELD_ID, cobrandName);
   }
 
   private List<String> getCobrandProperties (Cobrand cobrand, String property)
