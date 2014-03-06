@@ -1,5 +1,10 @@
 package org.mdavi.sitecustomizer.database.dao;
 
+import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newArrayList;
+
+import java.util.Collection;
+import java.util.Map;
+
 import org.bson.types.ObjectId;
 import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mongodb.morphia.Datastore;
@@ -30,11 +35,16 @@ public class CobrandDAO extends BasicDAO<Cobrand, ObjectId> implements ICobrandD
     {
       UpdateOperations<Cobrand> updateOperations = ds.createUpdateOperations(getEntityClass());
       
-      if(cobrand.hasProperties())
-        updateOperations.set("properties", cobrand.getProperties());
+      if(cobrand.hasProperties()) {
+        Map<String, Collection<String>> properties = cobrand.getProperties();
+        for(String property : properties.keySet()) {
+          Collection<String> values = properties.get(property);
+          updateOperations.set("properties." + property, values);
+        }
+      }
       
       if(cobrand.hasDomains())
-        updateOperations.set("domains", cobrand.getDomains());
+        updateOperations.addAll("domains", newArrayList(cobrand.getDomains()), false);
       
       if(cobrand.hasParent())
         updateOperations.set("parent", cobrand.getParent());

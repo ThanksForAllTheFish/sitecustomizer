@@ -61,6 +61,21 @@ public class Cobrand
     return values;
   }
 
+  public boolean hasDomains ()
+  {
+    return null != domains && !domains.isEmpty();
+  }
+
+  public boolean hasParent ()
+  {
+    return null != parent;
+  }
+
+  public boolean hasProperties ()
+  {
+    return null != properties && !properties.isEmpty();
+  }
+
   public Set<String> getDomains ()
   {
     return domains;
@@ -88,20 +103,5 @@ public class Cobrand
   private String parentString ()
   {
     return null == parent ? "" : ", with parent " + parent.cobrand;
-  }
-
-  public boolean hasDomains ()
-  {
-    return null != domains && !domains.isEmpty();
-  }
-
-  public boolean hasParent ()
-  {
-    return null != parent;
-  }
-
-  public boolean hasProperties ()
-  {
-    return null != properties && !properties.isEmpty();
   }
 }

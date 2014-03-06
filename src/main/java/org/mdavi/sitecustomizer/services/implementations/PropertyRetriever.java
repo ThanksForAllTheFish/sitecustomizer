@@ -1,6 +1,7 @@
 package org.mdavi.sitecustomizer.services.implementations;
 
-import java.util.ArrayList;
+import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newArrayList;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -52,7 +53,7 @@ public class PropertyRetriever implements Retriever
   {
     if(null == cobrand) return null;
     Collection<String> values = cobrand.getValuesFor(property);
-    return null == values? null : new ArrayList<>(values);
+    return null == values? null : newArrayList(values);
   }
 
 }

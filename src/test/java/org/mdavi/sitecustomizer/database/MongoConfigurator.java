@@ -96,6 +96,20 @@ public abstract class MongoConfigurator extends FakeCobrandTest
     return buildFakeProperties(name, Collections.singletonList(value));
   }
 
+  private void configureMorphia () throws UnknownHostException
+  {
+    mongo = new MongoClient(HOST, PORT);
+  
+    morphia = new Morphia();
+    morphia.map(Cobrand.class, Domain.class);
+  }
+
+  private void setupDaos ()
+  {
+    cobrandDAO = new CobrandDAO(morphia, mongo, SITECUSTOMIZER_DB);
+    domainDAO = new DomainDAO(morphia, mongo, SITECUSTOMIZER_DB);
+  }
+
   private static void configuredAndStartFakeMongoDb () throws UnknownHostException, IOException
   {
     final IMongodConfig config = new MongodConfigBuilder().version(Version.Main.V2_4)
@@ -115,20 +129,6 @@ public abstract class MongoConfigurator extends FakeCobrandTest
   {
     final DBCollection col = db.getCollection(collection);
     col.update(cobrand, cobrand, true, false);
-  }
-
-  private void configureMorphia () throws UnknownHostException
-  {
-    mongo = new MongoClient(HOST, PORT);
-  
-    morphia = new Morphia();
-    morphia.map(Cobrand.class, Domain.class);
-  }
-
-  private void setupDaos ()
-  {
-    cobrandDAO = new CobrandDAO(morphia, mongo, SITECUSTOMIZER_DB);
-    domainDAO = new DomainDAO(morphia, mongo, SITECUSTOMIZER_DB);
   }
 
   private static DBRef getRef (DB mongoDb, String collection, DBObject original)

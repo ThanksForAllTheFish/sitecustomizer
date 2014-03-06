@@ -1,15 +1,16 @@
 package org.mdavi.sitecustomizer.services.implementations;
 
+import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newHashMap;
+import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newTreeMap;
+import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newTreeSet;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mdavi.sitecustomizer.database.dao.CobrandDAO;
@@ -25,9 +26,9 @@ public class CobrandCreator
   public CobrandCreator (CobrandDAO cobrandDAO)
   {
     this.cobrandDAO = cobrandDAO;
-    this.defaultSettingsHolder = new HashMap<>();
-    this.domainHolder = new HashMap<>();
-    this.sonToParent = new HashMap<>();
+    this.defaultSettingsHolder = newHashMap();
+    this.domainHolder = newHashMap();
+    this.sonToParent = newHashMap();
   }
 
   /*
@@ -39,7 +40,6 @@ public class CobrandCreator
   public void importProperties (Properties properties)
   {
     Cobrand cobrand = null;
-    Map<String, Collection<String>> props = null;
     
     Map<String, String> orderedProperties = orderProperties(properties);
     
@@ -63,17 +63,18 @@ public class CobrandCreator
 
       String cobrandName = keyElements.get(1);
       
-      if(isNewCobrand(cobrand, cobrandName) )
-        props = newMapOrDefault(cobrandName);
-      
       if(isParentProperty(mongoKeyName)) {
         sonToParent.put(cobrandName, values.get(0));
         continue;
       }
+
+      Map<String, Collection<String>> props = newTreeMap();
+      if(isNewCobrand(cobrand, cobrandName) )
+        props = prevalorizeWithDefaultValues(cobrandName);
       
       props.put(mongoKeyName, values);
       
-      cobrand = new Cobrand(cobrandName, props, domainHolder.get(cobrandName));
+      cobrand = new Cobrand(cobrandName, props, domainHolder.remove(cobrandName));
       
       cobrandDAO.upsert(cobrand);
     }
@@ -84,34 +85,24 @@ public class CobrandCreator
     }
   }
 
-  private boolean isParentProperty (String mongoKeyName)
-  {
-    return "COBRAND_PARENT".equals(mongoKeyName);
-  }
-
   private void addDomain (List<String> domainElements, String cobrandName)
   {
     Set<String> domains = domainHolder.get(cobrandName);
     if(null == domains) {
-      domains = new TreeSet<>();
+      domains = newTreeSet();
     }
     domains.add(StringUtils.join(domainElements.toArray(), "."));
     domainHolder.put(cobrandName, domains);
   }
 
-  private boolean isDomainProperty (String prefix)
+  private void addProperty (String property, Collection<String> values)
   {
-    return "DOMAIN".equals(prefix);
+    defaultSettingsHolder.put(property, values);
   }
 
-  private boolean isNewCobrand (Cobrand cobrand, String cobrandName)
+  private Map<String, Collection<String>> prevalorizeWithDefaultValues (String cobrandName)
   {
-    return null == cobrand || !cobrandName.equals( cobrand.getCobrand());
-  }
-
-  private Map<String, Collection<String>> newMapOrDefault (String cobrandName)
-  {
-    Map<String, Collection<String>> map = new TreeMap<>();
+    Map<String, Collection<String>> map = newTreeMap();
     
     for(String property : defaultSettingsHolder.keySet()) {
       if(isInstitutionalFor(cobrandName, property))
@@ -121,26 +112,36 @@ public class CobrandCreator
     return map;
   }
 
-  private boolean isInstitutionalFor (String cobrandName, String property)
+  private static boolean isParentProperty (String mongoKeyName)
+  {
+    return "COBRAND_PARENT".equals(mongoKeyName);
+  }
+
+  private static boolean isDomainProperty (String prefix)
+  {
+    return "DOMAIN".equals(prefix);
+  }
+
+  private static boolean isNewCobrand (Cobrand cobrand, String cobrandName)
+  {
+    return null == cobrand || !cobrandName.equals( cobrand.getCobrand());
+  }
+
+  private static boolean isInstitutionalFor (String cobrandName, String property)
   {
     String language = property.substring(0, property.indexOf("_"));
     if ("it".equals(language) && "COBRANDTEST".equals(cobrandName)) return true;
     return false;
   }
 
-  private void addProperty (String property, Collection<String> values)
-  {
-    defaultSettingsHolder.put(property, values);
-  }
-
-  private boolean isDefaultProperty (String prefix)
+  private static boolean isDefaultProperty (String prefix)
   {
     return "DEFAULT".equals(prefix);
   }
 
-  private Map<String, String> orderProperties (Properties properties)
+  private static Map<String, String> orderProperties (Properties properties)
   {
-    Map<String, String> ordered = new TreeMap<>();
+    Map<String, String> ordered = newTreeMap();
     
     for(Object key : properties.keySet())
       ordered.put(key.toString(), properties.get(key).toString());
@@ -148,7 +149,7 @@ public class CobrandCreator
     return ordered;
   }
 
-  private String getPropertyNameInMongoFormat (List<String> keyElements)
+  private static String getPropertyNameInMongoFormat (List<String> keyElements)
   {
     String mongoKeyName = keyElements.get(0);
     
@@ -157,7 +158,7 @@ public class CobrandCreator
     return mongoKeyName;
   }
 
-  private List<String> split (String property, String separator)
+  private static List<String> split (String property, String separator)
   {
     return Arrays.asList(property.split(separator));
   }
