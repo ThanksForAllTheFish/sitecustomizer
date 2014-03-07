@@ -36,20 +36,27 @@ public class CobrandDAO extends BasicDAO<Cobrand, ObjectId> implements ICobrandD
     {
       UpdateOperations<Cobrand> updateOperations = ds.createUpdateOperations(getEntityClass());
       
+      boolean perform = false;
+      
       if(cobrand.hasProperties()) {
         Map<String, Collection<String>> properties = cobrand.getProperties();
         for(String property : properties.keySet()) {
           Collection<String> values = properties.get(property);
           updateOperations.set(FIELD_PROPERTIES + "." + property, values);
         }
+        perform = true;
       }
       
-      if(cobrand.hasDomains())
+      if(cobrand.hasDomains()) {
         updateOperations.addAll(FIELD_DOMAINS, newArrayList(cobrand.getDomains()), false);
+        perform = true;
+      }
       
-      if(cobrand.hasParent())
+      if(cobrand.hasParent()){
         updateOperations.set(FIELD_PARENT, cobrand.getParent());
-      
+        perform = true;
+      }
+      if(perform)
       update(query, updateOperations);
     }
   }

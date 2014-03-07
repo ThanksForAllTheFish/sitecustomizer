@@ -8,6 +8,7 @@ import static org.mdavi.sitecustomizer.matchers.SiteCustomizerMatchers.looseEqua
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.concurrent.Executors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class CobrandCreatorTest extends MongoConfigurator
     {
       throw new RuntimeException(e);
     }
-    creator = new CobrandCreator(cobrandDAO);
+    creator = new CobrandCreator(cobrandDAO, Executors.newCachedThreadPool());
   }
 
   @Test
@@ -45,6 +46,10 @@ public class CobrandCreatorTest extends MongoConfigurator
     creator.importProperties(properties);
     
     Cobrand cobrand = cobrandDAO.findOne(FIELD_ID, COBRANDTEST);
+    
+    for(String prop : cobrand.getProperties().keySet()) {
+      System.err.println(prop + " -> " + cobrand.getProperties().get(prop));
+    }
     
     assertThat(cobrand, looseEqual(COBRANDTEST, 33, 2));
   }
