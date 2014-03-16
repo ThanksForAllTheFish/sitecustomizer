@@ -7,19 +7,16 @@ import static org.mdavi.sitecustomizer.matchers.SiteCustomizerMatchers.equalCobr
 import java.util.Collection;
 import java.util.Collections;
 
-import org.bson.types.ObjectId;
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.mdavi.sitecustomizer.MockableTest;
+import org.mdavi.sitecustomizer.database.dao.IDomainDAO;
 import org.mdavi.sitecustomizer.model.Cobrand;
-import org.mdavi.sitecustomizer.model.Domain;
 import org.mdavi.sitecustomizer.services.implementations.CobrandRetriever;
-import org.mongodb.morphia.dao.DAO;
 
 public class CobrandRetrieverTest extends MockableTest
 {
-  @SuppressWarnings("unchecked")
-  private final DAO<Domain, ObjectId> domainDAO = context.mock(DAO.class);
+  private final IDomainDAO domainDAO = context.mock(IDomainDAO.class);
   private ICobrandRetriever cobrandRetriever = new CobrandRetriever(domainDAO);
 
   @Test

@@ -12,6 +12,8 @@ import org.junit.BeforeClass;
 import org.mdavi.sitecustomizer.FakeCobrandTest;
 import org.mdavi.sitecustomizer.database.dao.CobrandDAO;
 import org.mdavi.sitecustomizer.database.dao.DomainDAO;
+import org.mdavi.sitecustomizer.database.dao.ICobrandDAO;
+import org.mdavi.sitecustomizer.database.dao.IDomainDAO;
 import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mdavi.sitecustomizer.model.Domain;
 import org.mongodb.morphia.Morphia;
@@ -54,8 +56,8 @@ public abstract class MongoConfigurator extends FakeCobrandTest
   private static final String     SITECUSTOMIZER_DB     = "sitecustomizer";
   private static MongodExecutable mongodExecutable;
 
-  protected CobrandDAO            cobrandDAO;
-  protected DomainDAO            domainDAO;
+  protected ICobrandDAO            cobrandDAO;
+  protected IDomainDAO            domainDAO;
   
   private Morphia                 morphia;
   private Mongo                   mongo;

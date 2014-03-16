@@ -13,23 +13,17 @@ import java.util.Set;
 
 import org.hamcrest.Matcher;
 import org.jmock.Expectations;
-import org.junit.After;
 import org.junit.Test;
 import org.mdavi.sitecustomizer.MockableTest;
 import org.mdavi.sitecustomizer.database.dao.ICobrandDAO;
 import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mdavi.sitecustomizer.services.implementations.PropertyRetriever;
 
-public class RetrieverServiceTest extends MockableTest
+public class PropertyRetrieverTest extends MockableTest
 {
   private final ICobrandDAO cobrandDAO = context.mock(ICobrandDAO.class);
   private final Retriever service = new PropertyRetriever(cobrandDAO);
   
-  @After
-  public void tearDown () {
-    context.assertIsSatisfied();
-  }
-
   @Test
   public void canRetrieveASinglePropertyValue () throws NoSuchFieldException, IllegalAccessException
   {
