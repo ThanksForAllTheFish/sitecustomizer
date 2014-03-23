@@ -11,9 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mdavi.sitecustomizer.MongoSiteCustomizer;
 import org.mdavi.sitecustomizer.database.MongoConfigurator;
+import org.mdavi.sitecustomizer.services.ICobrandRetriever;
 import org.mdavi.sitecustomizer.services.Retriever;
 import org.mdavi.sitecustomizer.services.implementations.CobrandRetriever;
-import org.mdavi.sitecustomizer.services.implementations.ICobrandRetriever;
 import org.mdavi.sitecustomizer.services.implementations.PropertyRetriever;
 
 public class MongoSiteCustomizerE2E extends MongoConfigurator

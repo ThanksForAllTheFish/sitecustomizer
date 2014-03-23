@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.jmock.Expectations;
 import org.junit.Test;
+import org.mdavi.sitecustomizer.services.ICobrandRetriever;
 import org.mdavi.sitecustomizer.services.Retriever;
-import org.mdavi.sitecustomizer.services.implementations.ICobrandRetriever;
 
 public class DomainsRetrieverTest extends MockableTest
 {

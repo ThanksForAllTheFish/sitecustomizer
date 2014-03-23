@@ -46,4 +46,32 @@ public class SiteCustomizerMatchers
       }
     };
   }
+
+  public static Matcher<Cobrand> looseEqual (final String cobrandName, final int numberOfProperties, final int numberOfDomains)
+  {
+    return new TypeSafeMatcher<Cobrand>()
+    {
+
+      @Override
+      public void describeTo (Description description)
+      {
+        description.appendText("<" + cobrandName + " with " + numberOfProperties + " properties, with " + numberOfDomains + " domains>");
+      }
+
+      @Override
+      protected boolean matchesSafely (Cobrand cobrand)
+      {
+        if (!cobrandName.equals(cobrand.getCobrand()))
+        {
+          return false;
+        }
+        
+        if(numberOfProperties != cobrand.getProperties().size()) return false;
+        
+        if(numberOfDomains != cobrand.getDomains().size()) return false;
+        
+        return true;
+      }
+    };
+  }
 }

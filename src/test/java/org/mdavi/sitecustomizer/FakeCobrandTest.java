@@ -43,9 +43,7 @@ public abstract class FakeCobrandTest
 
   protected static Domain buildFakeDomain (String address) throws NoSuchFieldException, IllegalAccessException
   {
-    Domain domain = new Domain();
-    inject(domain, "address", address);
-    inject(domain, "institutional", prepareFakeCobrand("cobrand", Collections.<String, Collection<String>>emptyMap()));
+    Domain domain = new Domain(address, prepareFakeCobrand("cobrand", Collections.<String, Collection<String>>emptyMap()));
     return domain;
   }
   

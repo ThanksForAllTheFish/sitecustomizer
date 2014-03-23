@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.mdavi.sitecustomizer.model.Cobrand;
+import org.mdavi.sitecustomizer.services.ICobrandRetriever;
 import org.mdavi.sitecustomizer.services.Retriever;
-import org.mdavi.sitecustomizer.services.implementations.ICobrandRetriever;
 
 public class MongoSiteCustomizer
 {

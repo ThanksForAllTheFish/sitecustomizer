@@ -11,8 +11,8 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.jmock.Expectations;
 import org.junit.Test;
+import org.mdavi.sitecustomizer.services.ICobrandRetriever;
 import org.mdavi.sitecustomizer.services.Retriever;
-import org.mdavi.sitecustomizer.services.implementations.ICobrandRetriever;
 
 public class PropertiesSiteCustomizerTest extends MockableTest
 {

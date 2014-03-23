@@ -1,4 +1,4 @@
-package org.mdavi.sitecustomizer.services.implementations;
+package org.mdavi.sitecustomizer.services;
 
 import org.mdavi.sitecustomizer.model.Cobrand;
 

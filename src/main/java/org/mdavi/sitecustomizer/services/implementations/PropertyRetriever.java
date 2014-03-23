@@ -1,20 +1,21 @@
 package org.mdavi.sitecustomizer.services.implementations;
 
-import java.util.ArrayList;
+import static org.mdavi.sitecustomizer.model.Cobrand.FIELD_ID;
+import static org.mdavi.sitecustomizer.utilities.CollectionsUtils.newArrayList;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.bson.types.ObjectId;
+import org.mdavi.sitecustomizer.database.dao.ICobrandDAO;
 import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mdavi.sitecustomizer.services.Retriever;
-import org.mongodb.morphia.dao.DAO;
 
 public class PropertyRetriever implements Retriever
 {
-  private final DAO<Cobrand, ObjectId> cobrandDAO;
+  private final ICobrandDAO cobrandDAO;
 
-  public PropertyRetriever (DAO<Cobrand, ObjectId> cobrandDAO)
+  public PropertyRetriever (ICobrandDAO cobrandDAO)
   {
     this.cobrandDAO = cobrandDAO;
   }
@@ -46,14 +47,14 @@ public class PropertyRetriever implements Retriever
 
   private Cobrand getCobrand (String cobrandName)
   {
-    return cobrandDAO.findOne("cobrand", cobrandName);
+    return cobrandDAO.findOne(FIELD_ID, cobrandName);
   }
 
   private List<String> getCobrandProperties (Cobrand cobrand, String property)
   {
     if(null == cobrand) return null;
     Collection<String> values = cobrand.getValuesFor(property);
-    return null == values? null : new ArrayList<>(values);
+    return null == values? null : newArrayList(values);
   }
 
 }

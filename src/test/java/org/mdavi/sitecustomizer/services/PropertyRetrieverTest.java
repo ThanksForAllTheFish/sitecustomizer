@@ -11,27 +11,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.bson.types.ObjectId;
 import org.hamcrest.Matcher;
 import org.jmock.Expectations;
-import org.junit.After;
 import org.junit.Test;
 import org.mdavi.sitecustomizer.MockableTest;
+import org.mdavi.sitecustomizer.database.dao.ICobrandDAO;
 import org.mdavi.sitecustomizer.model.Cobrand;
 import org.mdavi.sitecustomizer.services.implementations.PropertyRetriever;
-import org.mongodb.morphia.dao.DAO;
 
-public class RetrieverServiceTest extends MockableTest
+public class PropertyRetrieverTest extends MockableTest
 {
-  @SuppressWarnings("unchecked")
-  private final DAO<Cobrand, ObjectId> cobrandDAO = context.mock(DAO.class);
+  private final ICobrandDAO cobrandDAO = context.mock(ICobrandDAO.class);
   private final Retriever service = new PropertyRetriever(cobrandDAO);
   
-  @After
-  public void tearDown () {
-    context.assertIsSatisfied();
-  }
-
   @Test
   public void canRetrieveASinglePropertyValue () throws NoSuchFieldException, IllegalAccessException
   {
